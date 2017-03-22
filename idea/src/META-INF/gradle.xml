@@ -53,7 +53,6 @@
 
         <projectConfigurator implementation="org.jetbrains.kotlin.idea.configuration.KotlinGradleModuleConfigurator"/>
         <projectConfigurator implementation="org.jetbrains.kotlin.idea.configuration.KotlinJsGradleModuleConfigurator"/>
-        <gradleModelFacade implementation="org.jetbrains.kotlin.idea.inspections.gradle.DefaultGradleModelFacade"/>
 
         <scriptTemplatesProvider
             implementation="org.jetbrains.kotlin.idea.core.script.GradleSettingsKotlinDSLTemplateProvider"/>

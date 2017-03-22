@@ -89,7 +89,6 @@
 
         <quickFixContributor implementation="org.jetbrains.kotlin.android.quickfix.AndroidQuickFixRegistrar"/>
         <projectConfigurator implementation="org.jetbrains.kotlin.android.configure.KotlinAndroidGradleModuleConfigurator"/>
-        <gradleModelFacade implementation="org.jetbrains.kotlin.android.configure.AndroidGradleModelFacade"/>
         <completionInformationProvider implementation="org.jetbrains.kotlin.AndroidExtensionsCompletionInformationProvider" />
 
         <expressionCodegenExtension implementation="org.jetbrains.kotlin.android.parcel.IDEParcelableCodegenExtension"/>
