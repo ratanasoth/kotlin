@@ -50,7 +50,7 @@ import kotlin.script.experimental.dependencies.ScriptDependencies
 internal class ScriptDependenciesUpdater(
         private val project: Project,
         private val cache: ScriptDependenciesCache,
-        private val scriptDefinitionProvider: KotlinScriptDefinitionProvider
+        private val scriptDefinitionProvider: ScriptDefinitionProvider
 ) {
     private val requests = ConcurrentHashMap<String, ModStampedRequest>()
     private val contentLoader = ScriptContentLoader(project)
