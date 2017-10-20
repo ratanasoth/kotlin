@@ -68,7 +68,7 @@ public external class Date() {
 
     public fun setSeconds(secondsValue: Int, msValue: Int): Unit
 
-    public fun getTime(): Number
+    public fun getTime(): Double
 
     public fun setTime(timeValue: Number): Unit
 
@@ -128,56 +128,38 @@ public external class Date() {
 
     public fun toJSON(): Json
 
-    public fun toLocaleDateString(locales: Array<String>? = definedExternally, options: Json? = definedExternally): String
+    public fun toLocaleDateString(locales: Array<String> = definedExternally, options: LocaleOptions = definedExternally): String
 
-    public fun toLocaleDateString(locales: String): String
+    public fun toLocaleDateString(locales: String, options: LocaleOptions = definedExternally): String
 
-    public fun toLocaleDateString(locales: String, options: Json): String
+    public fun toLocaleString(locales: Array<String> = definedExternally, options: LocaleOptions = definedExternally): String
 
-    public fun toLocaleDateString(locales: Array<String>? = definedExternally, options: LocaleOptions?): String
+    public fun toLocaleString(locales: String, options: LocaleOptions = definedExternally): String
 
-    public fun toLocaleDateString(locales: String, options: LocaleOptions?): String
+    public fun toLocaleTimeString(locales: Array<String> = definedExternally, options: LocaleOptions = definedExternally): String
 
-    public fun toLocaleString(locales: Array<String>? = definedExternally, options: Json? = definedExternally): String
-
-    public fun toLocaleString(locales: String): String
-
-    public fun toLocaleString(locales: String, options: Json): String
-
-    public fun toLocaleString(locales: Array<String>? = definedExternally, options: LocaleOptions?): String
-
-    public fun toLocaleString(locales: String, options: LocaleOptions?): String
-
-    public fun toLocaleTimeString(locales: Array<String>? = definedExternally, options: Json? = definedExternally): String
-
-    public fun toLocaleTimeString(locales: String): String
-
-    public fun toLocaleTimeString(locales: String, options: Json): String
-
-    public fun toLocaleTimeString(locales: Array<String>? = definedExternally, options: LocaleOptions?): String
-
-    public fun toLocaleTimeString(locales: String, options: LocaleOptions?): String
+    public fun toLocaleTimeString(locales: String, options: LocaleOptions = definedExternally): String
 
     public fun toTimeString(): String
 
     public fun toUTCString(): String
 
     public companion object {
-        public fun now(): Number
+        public fun now(): Double
 
-        public fun parse(dateString: String): Number
+        public fun parse(dateString: String): Double
 
-        public fun UTC(year: Int, month: Int): Number
+        public fun UTC(year: Int, month: Int): Double
 
-        public fun UTC(year: Int, month: Int, day: Int): Number
+        public fun UTC(year: Int, month: Int, day: Int): Double
 
-        public fun UTC(year: Int, month: Int, day: Int, hour: Int): Number
+        public fun UTC(year: Int, month: Int, day: Int, hour: Int): Double
 
-        public fun UTC(year: Int, month: Int, day: Int, hour: Int, minute: Int): Number
+        public fun UTC(year: Int, month: Int, day: Int, hour: Int, minute: Int): Double
 
-        public fun UTC(year: Int, month: Int, day: Int, hour: Int, minute: Int, second: Int): Number
+        public fun UTC(year: Int, month: Int, day: Int, hour: Int, minute: Int, second: Int): Double
 
-        public fun UTC(year: Int, month: Int, day: Int, hour: Int, minute: Int, second: Int, millisecond: Number): Number
+        public fun UTC(year: Int, month: Int, day: Int, hour: Int, minute: Int, second: Int, millisecond: Number): Double
     }
 
     public interface LocaleOptions {
@@ -186,6 +168,8 @@ public external class Date() {
         public var timeZone: String?
 
         public var hour12: Boolean?
+
+        public var formatMatcher: String?
 
         public var weekday: String?
 
