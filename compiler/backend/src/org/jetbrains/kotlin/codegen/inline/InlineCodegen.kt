@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.codegen.inline
 
 import com.intellij.psi.PsiElement
 import com.intellij.util.ArrayUtil
+import org.jetbrains.kotlin.backend.common.isBuiltInCoroutineContext
 import org.jetbrains.kotlin.builtins.BuiltInsPackageFragment
 import org.jetbrains.kotlin.codegen.*
 import org.jetbrains.kotlin.codegen.AsmUtil.getMethodAsmFlags
@@ -49,8 +50,6 @@ import org.jetbrains.kotlin.serialization.deserialization.descriptors.Deserializ
 import org.jetbrains.kotlin.types.expressions.DoubleColonLHS
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingUtils.isFunctionLiteral
 import org.jetbrains.kotlin.types.expressions.LabelResolver
-import org.jetbrains.kotlin.utils.DFS
-import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.org.objectweb.asm.Opcodes
 import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
@@ -251,7 +250,7 @@ abstract class InlineCodegen<out T: BaseExpressionCodegen>(
             addInlineMarker(codegen.v, true)
         }
 
-        if (functionDescriptor.isBuiltInCoroutinContextInJvm()) {
+        if (functionDescriptor.isBuiltInCoroutineContext()) {
             invocationParamBuilder.addNextValueParameter(CONTINUATION_ASM_TYPE, false, StackValue.local(1, CONTINUATION_ASM_TYPE), 0)
         }
 
@@ -480,7 +479,7 @@ abstract class InlineCodegen<out T: BaseExpressionCodegen>(
                         SMAPParser.parseOrCreateDefault(null, null, "fake", -1, -1)
                 )
             }
-            else if (functionDescriptor.isBuiltInCoroutinContextInJvm()) {
+            else if (functionDescriptor.isBuiltInCoroutineContext()) {
                 return SMAPAndMethodNode(
                         createMethodNodeForCoroutineContext(
                                 functionDescriptor, state.typeMapper

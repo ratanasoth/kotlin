@@ -17,10 +17,7 @@
 package org.jetbrains.kotlin.codegen.coroutines
 
 import com.intellij.openapi.project.Project
-import org.jetbrains.kotlin.backend.common.COROUTINES_INTRINSICS_PACKAGE_FQ_NAME
-import org.jetbrains.kotlin.backend.common.COROUTINE_CONTEXT_NAME
-import org.jetbrains.kotlin.backend.common.COROUTINE_SUSPENDED_NAME
-import org.jetbrains.kotlin.backend.common.isBuiltInSuspendCoroutineOrReturn
+import org.jetbrains.kotlin.backend.common.*
 import org.jetbrains.kotlin.builtins.isBuiltinFunctionalType
 import org.jetbrains.kotlin.codegen.StackValue
 import org.jetbrains.kotlin.codegen.binding.CodegenBinding
@@ -252,9 +249,6 @@ fun ModuleDescriptor.getContinuationOfTypeOrAny(kotlinType: KotlinType) =
 fun FunctionDescriptor.isBuiltInSuspendCoroutineOrReturnInJvm() =
         getUserData(INITIAL_DESCRIPTOR_FOR_SUSPEND_FUNCTION)?.isBuiltInSuspendCoroutineOrReturn() == true
 
-fun FunctionDescriptor.isBuiltInCoroutinContextInJvm() =
-        (this as? PropertyGetterDescriptor)?.correspondingProperty?.name == COROUTINE_CONTEXT_NAME
-
 fun createMethodNodeForSuspendCoroutineOrReturn(
         functionDescriptor: FunctionDescriptor,
         typeMapper: KotlinTypeMapper
@@ -299,7 +293,7 @@ fun createMethodNodeForCoroutineContext(
         functionDescriptor: FunctionDescriptor,
         typeMapper: KotlinTypeMapper
 ): MethodNode {
-    assert(functionDescriptor.isBuiltInCoroutinContextInJvm()) {
+    assert(functionDescriptor.isBuiltInCoroutineContext()) {
         "functionDescriptor must be kotlin.coroutines.intrinsics.coroutineContext property getter"
     }
 
