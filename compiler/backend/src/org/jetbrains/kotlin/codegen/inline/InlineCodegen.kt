@@ -223,6 +223,11 @@ abstract class InlineCodegen<out T: BaseExpressionCodegen>(
         return true
     }
 
+    private fun insideStatic(): Boolean {
+        codegen as ExpressionCodegen
+        return AsmUtil.isStaticMethod(codegen.context.contextKind, codegen.context.functionDescriptor)
+    }
+
     protected fun inlineCall(nodeAndSmap: SMAPAndMethodNode, callDefault: Boolean): InlineResult {
         assert(delayedHiddenWriting == null) { "'putHiddenParamsIntoLocals' should be called after 'processAndPutHiddenParameters(true)'" }
         defaultSourceMapper.callSiteMarker = CallSiteMarker(codegen.lastLineNumber)
@@ -251,7 +256,12 @@ abstract class InlineCodegen<out T: BaseExpressionCodegen>(
         }
 
         if (functionDescriptor.isBuiltInCoroutineContext()) {
-            invocationParamBuilder.addNextValueParameter(CONTINUATION_ASM_TYPE, false, StackValue.local(1, CONTINUATION_ASM_TYPE), 0)
+            invocationParamBuilder.addNextValueParameter(
+                    CONTINUATION_ASM_TYPE,
+                    false,
+                    StackValue.local(if (insideStatic()) 0 else 1, CONTINUATION_ASM_TYPE),
+                    0
+            )
         }
 
         val parameters = invocationParamBuilder.buildParameters()
