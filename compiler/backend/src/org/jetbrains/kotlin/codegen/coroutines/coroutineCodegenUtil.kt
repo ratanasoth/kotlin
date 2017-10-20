@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.codegen.coroutines
 
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.backend.common.COROUTINES_INTRINSICS_PACKAGE_FQ_NAME
+import org.jetbrains.kotlin.backend.common.COROUTINE_CONTEXT_NAME
 import org.jetbrains.kotlin.backend.common.COROUTINE_SUSPENDED_NAME
 import org.jetbrains.kotlin.backend.common.isBuiltInSuspendCoroutineOrReturn
 import org.jetbrains.kotlin.builtins.isBuiltinFunctionalType
@@ -67,6 +68,9 @@ val COROUTINES_JVM_INTERNAL_PACKAGE_FQ_NAME =
 val CONTINUATION_ASM_TYPE = DescriptorUtils.CONTINUATION_INTERFACE_FQ_NAME.topLevelClassAsmType()
 
 @JvmField
+val COROUTINE_CONTEXT_ASM_TYPE = DescriptorUtils.COROUTINES_PACKAGE_FQ_NAME.child(Name.identifier("CoroutineContext")).topLevelClassAsmType()
+
+@JvmField
 val COROUTINE_IMPL_ASM_TYPE = COROUTINES_JVM_INTERNAL_PACKAGE_FQ_NAME.child(Name.identifier("CoroutineImpl")).topLevelClassAsmType()
 
 private val COROUTINES_INTRINSICS_FILE_FACADE_INTERNAL_NAME =
@@ -76,6 +80,7 @@ private val INTERNAL_COROUTINE_INTRINSICS_OWNER_INTERNAL_NAME =
         COROUTINES_JVM_INTERNAL_PACKAGE_FQ_NAME.child(Name.identifier("CoroutineIntrinsics")).topLevelClassInternalName()
 
 private val NORMALIZE_CONTINUATION_METHOD_NAME = "normalizeContinuation"
+private val GET_CONTEXT_METHOD_NAME = "getContext"
 
 data class ResolvedCallWithRealDescriptor(val resolvedCall: ResolvedCall<*>, val fakeContinuationExpression: KtExpression)
 
@@ -247,6 +252,9 @@ fun ModuleDescriptor.getContinuationOfTypeOrAny(kotlinType: KotlinType) =
 fun FunctionDescriptor.isBuiltInSuspendCoroutineOrReturnInJvm() =
         getUserData(INITIAL_DESCRIPTOR_FOR_SUSPEND_FUNCTION)?.isBuiltInSuspendCoroutineOrReturn() == true
 
+fun FunctionDescriptor.isBuiltInCoroutinContextInJvm() =
+        (this as? PropertyGetterDescriptor)?.correspondingProperty?.name == COROUTINE_CONTEXT_NAME
+
 fun createMethodNodeForSuspendCoroutineOrReturn(
         functionDescriptor: FunctionDescriptor,
         typeMapper: KotlinTypeMapper
@@ -283,6 +291,46 @@ fun createMethodNodeForSuspendCoroutineOrReturn(
     )
     node.visitInsn(Opcodes.ARETURN)
     node.visitMaxs(2, 2)
+
+    return node
+}
+
+fun createMethodNodeForCoroutineContext(
+        functionDescriptor: FunctionDescriptor,
+        typeMapper: KotlinTypeMapper
+): MethodNode {
+    assert(functionDescriptor.isBuiltInCoroutinContextInJvm()) {
+        "functionDescriptor must be kotlin.coroutines.intrinsics.coroutineContext property getter"
+    }
+
+    val node =
+            MethodNode(
+                    Opcodes.ASM5,
+                    Opcodes.ACC_STATIC,
+                    "fake",
+                    Type.getMethodDescriptor(COROUTINE_CONTEXT_ASM_TYPE, CONTINUATION_ASM_TYPE),
+                    null, null
+            )
+
+    node.visitVarInsn(Opcodes.ALOAD, 0)
+
+    node.visitMethodInsn(
+            Opcodes.INVOKESTATIC,
+            INTERNAL_COROUTINE_INTRINSICS_OWNER_INTERNAL_NAME,
+            NORMALIZE_CONTINUATION_METHOD_NAME,
+            Type.getMethodDescriptor(CONTINUATION_ASM_TYPE, CONTINUATION_ASM_TYPE),
+            false
+    )
+
+    node.visitMethodInsn(
+            Opcodes.INVOKEINTERFACE,
+            CONTINUATION_ASM_TYPE.internalName,
+            GET_CONTEXT_METHOD_NAME,
+            Type.getMethodDescriptor(COROUTINE_CONTEXT_ASM_TYPE),
+            true
+    )
+    node.visitInsn(Opcodes.ARETURN)
+    node.visitMaxs(1, 1)
 
     return node
 }

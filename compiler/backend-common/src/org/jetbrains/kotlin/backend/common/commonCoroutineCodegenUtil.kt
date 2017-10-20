@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.module
 
 val SUSPEND_COROUTINE_OR_RETURN_NAME = Name.identifier("suspendCoroutineOrReturn")
 val COROUTINE_SUSPENDED_NAME = Name.identifier("COROUTINE_SUSPENDED")
+val COROUTINE_CONTEXT_NAME = Name.identifier("coroutineContext")
 
 val COROUTINES_INTRINSICS_PACKAGE_FQ_NAME = DescriptorUtils.COROUTINES_PACKAGE_FQ_NAME.child(Name.identifier("intrinsics"))
 

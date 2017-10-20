@@ -22,8 +22,7 @@ import org.jetbrains.kotlin.builtins.BuiltInsPackageFragment
 import org.jetbrains.kotlin.codegen.*
 import org.jetbrains.kotlin.codegen.AsmUtil.getMethodAsmFlags
 import org.jetbrains.kotlin.codegen.AsmUtil.isPrimitive
-import org.jetbrains.kotlin.codegen.coroutines.createMethodNodeForSuspendCoroutineOrReturn
-import org.jetbrains.kotlin.codegen.coroutines.isBuiltInSuspendCoroutineOrReturnInJvm
+import org.jetbrains.kotlin.codegen.coroutines.*
 import org.jetbrains.kotlin.codegen.intrinsics.bytecode
 import org.jetbrains.kotlin.codegen.intrinsics.classId
 import org.jetbrains.kotlin.codegen.state.GenerationState
@@ -252,6 +251,10 @@ abstract class InlineCodegen<out T: BaseExpressionCodegen>(
             addInlineMarker(codegen.v, true)
         }
 
+        if (functionDescriptor.isBuiltInCoroutinContextInJvm()) {
+            invocationParamBuilder.addNextValueParameter(CONTINUATION_ASM_TYPE, false, StackValue.local(1, CONTINUATION_ASM_TYPE), 0)
+        }
+
         val parameters = invocationParamBuilder.buildParameters()
 
         val info = RootInliningContext(
@@ -472,6 +475,14 @@ abstract class InlineCodegen<out T: BaseExpressionCodegen>(
             else if (functionDescriptor.isBuiltInSuspendCoroutineOrReturnInJvm()) {
                 return SMAPAndMethodNode(
                         createMethodNodeForSuspendCoroutineOrReturn(
+                                functionDescriptor, state.typeMapper
+                        ),
+                        SMAPParser.parseOrCreateDefault(null, null, "fake", -1, -1)
+                )
+            }
+            else if (functionDescriptor.isBuiltInCoroutinContextInJvm()) {
+                return SMAPAndMethodNode(
+                        createMethodNodeForCoroutineContext(
                                 functionDescriptor, state.typeMapper
                         ),
                         SMAPParser.parseOrCreateDefault(null, null, "fake", -1, -1)

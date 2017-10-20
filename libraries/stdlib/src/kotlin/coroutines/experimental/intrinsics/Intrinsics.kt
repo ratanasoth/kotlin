@@ -52,7 +52,7 @@ public inline suspend fun <T> suspendCoroutineOrReturn(crossinline block: (Conti
  * but still provide easy access to coroutine context.
  */
 // TODO: Add @SinceKotlin
-public val coroutineContext: CoroutineContext
+public inline val coroutineContext: CoroutineContext
     get() {
         throw NotImplementedError("Implemented as intrinsic")
     }
