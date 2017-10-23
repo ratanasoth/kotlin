@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -80,7 +80,7 @@ public class CheckerTestUtil {
     private static final String IGNORE_DIAGNOSTIC_PARAMETER = "IGNORE";
     private static final String SHOULD_BE_ESCAPED = "\\)\\(;";
     private static final String DIAGNOSTIC_PARAMETER = "(?:(?:\\\\[" + SHOULD_BE_ESCAPED + "])|[^" + SHOULD_BE_ESCAPED + "])+";
-    private static final String INDIVIDUAL_DIAGNOSTIC = "(\\w+:)?(\\w+)(\\(" + DIAGNOSTIC_PARAMETER + "(;\\s*" + DIAGNOSTIC_PARAMETER + ")*\\))?";
+    private static final String INDIVIDUAL_DIAGNOSTIC = "(\\w+;)?(\\w+:)?(\\w+)(\\(" + DIAGNOSTIC_PARAMETER + "(;\\s*" + DIAGNOSTIC_PARAMETER + ")*\\))?";
     private static final Pattern RANGE_START_OR_END_PATTERN = Pattern.compile("(<!" +
                                                                               INDIVIDUAL_DIAGNOSTIC + "(,\\s*" +
                                                                               INDIVIDUAL_DIAGNOSTIC + ")*!>)|(<!>)");
@@ -93,10 +93,12 @@ public class CheckerTestUtil {
             @NotNull List<Pair<MultiTargetPlatform, BindingContext>> implementingModulesBindings,
             @NotNull PsiElement root,
             boolean markDynamicCalls,
-            @Nullable List<DeclarationDescriptor> dynamicCallDescriptors
+            @Nullable List<DeclarationDescriptor> dynamicCallDescriptors,
+            boolean withNewInference
+
     ) {
         List<ActualDiagnostic> result =
-                getDiagnosticsIncludingSyntaxErrors(bindingContext, root, markDynamicCalls, dynamicCallDescriptors, null);
+                getDiagnosticsIncludingSyntaxErrors(bindingContext, root, markDynamicCalls, dynamicCallDescriptors, null, withNewInference);
 
         List<Pair<MultiTargetPlatform, BindingContext>> sortedBindings = CollectionsKt.sortedWith(
                 implementingModulesBindings,
@@ -109,7 +111,7 @@ public class CheckerTestUtil {
 
             result.addAll(getDiagnosticsIncludingSyntaxErrors(
                     binding.getSecond(), root, markDynamicCalls, dynamicCallDescriptors,
-                    ((MultiTargetPlatform.Specific) platform).getPlatform()
+                    ((MultiTargetPlatform.Specific) platform).getPlatform(), withNewInference
             ));
         }
 
@@ -122,20 +124,21 @@ public class CheckerTestUtil {
             @NotNull PsiElement root,
             boolean markDynamicCalls,
             @Nullable List<DeclarationDescriptor> dynamicCallDescriptors,
-            @Nullable String platform
+            @Nullable String platform,
+            boolean withNewInference
     ) {
         List<ActualDiagnostic> diagnostics = new ArrayList<>();
         for (Diagnostic diagnostic : bindingContext.getDiagnostics().all()) {
             if (PsiTreeUtil.isAncestor(root, diagnostic.getPsiElement(), false)) {
-                diagnostics.add(new ActualDiagnostic(diagnostic, platform));
+                diagnostics.add(new ActualDiagnostic(diagnostic, platform, withNewInference));
             }
         }
 
         for (PsiErrorElement errorElement : AnalyzingUtils.getSyntaxErrorRanges(root)) {
-            diagnostics.add(new ActualDiagnostic(new SyntaxErrorDiagnostic(errorElement), platform));
+            diagnostics.add(new ActualDiagnostic(new SyntaxErrorDiagnostic(errorElement), platform, withNewInference));
         }
 
-        diagnostics.addAll(getDebugInfoDiagnostics(root, bindingContext, markDynamicCalls, dynamicCallDescriptors, platform));
+        diagnostics.addAll(getDebugInfoDiagnostics(root, bindingContext, markDynamicCalls, dynamicCallDescriptors, platform, withNewInference));
         return diagnostics;
     }
 
@@ -146,7 +149,8 @@ public class CheckerTestUtil {
             @NotNull BindingContext bindingContext,
             boolean markDynamicCalls,
             @Nullable List<DeclarationDescriptor> dynamicCallDescriptors,
-            @Nullable String platform
+            @Nullable String platform,
+            boolean withNewInference
     ) {
         List<ActualDiagnostic> debugAnnotations = new ArrayList<>();
 
@@ -178,7 +182,7 @@ public class CheckerTestUtil {
             }
 
             private void newDiagnostic(KtElement element, DebugInfoDiagnosticFactory factory) {
-                debugAnnotations.add(new ActualDiagnostic(new DebugInfoDiagnostic(element, factory), platform));
+                debugAnnotations.add(new ActualDiagnostic(new DebugInfoDiagnostic(element, factory), platform, withNewInference));
             }
         });
 
@@ -193,7 +197,8 @@ public class CheckerTestUtil {
         )) {
             for (KtExpression expression : bindingContext.getSliceContents(factory.getFirst()).keySet()) {
                 if (PsiTreeUtil.isAncestor(root, expression, false)) {
-                    debugAnnotations.add(new ActualDiagnostic(new DebugInfoDiagnostic(expression, factory.getSecond()), platform));
+                    debugAnnotations.add(new ActualDiagnostic(new DebugInfoDiagnostic(expression, factory.getSecond()), platform,
+                                                              withNewInference));
                 }
             }
         }
@@ -207,6 +212,10 @@ public class CheckerTestUtil {
         void wrongParametersDiagnostic(TextDiagnostic expectedDiagnostic, TextDiagnostic actualDiagnostic, int start, int end);
 
         void unexpectedDiagnostic(TextDiagnostic diagnostic, int actualStart, int actualEnd);
+
+        boolean isWithNewInference();
+
+        boolean isWithNewInferenceDirective();
     }
 
     public static Map<ActualDiagnostic, TextDiagnostic> diagnosticsDiff(
@@ -219,13 +228,30 @@ public class CheckerTestUtil {
         assertSameFile(actual);
 
         Iterator<DiagnosedRange> expectedDiagnostics = expected.iterator();
-        List<DiagnosticDescriptor> sortedDiagnosticDescriptors = getSortedDiagnosticDescriptors(actual);
+        List<DiagnosticDescriptor> sortedDiagnosticDescriptors = getSortedDiagnosticDescriptors(actual, Collections.emptyList(), callbacks.isWithNewInferenceDirective());
         Iterator<DiagnosticDescriptor> actualDiagnostics = sortedDiagnosticDescriptors.iterator();
 
         DiagnosedRange currentExpected = safeAdvance(expectedDiagnostics);
         DiagnosticDescriptor currentActual = safeAdvance(actualDiagnostics);
         while (currentExpected != null || currentActual != null) {
             if (currentExpected != null) {
+                if (callbacks.isWithNewInference()) {
+                    boolean withOldInference = CollectionsKt.all(currentExpected.diagnostics, diagnostic -> !diagnostic.withNewInference);
+                    if (withOldInference) {
+                        missingDiagnostics(callbacks, currentExpected);
+                        currentExpected = safeAdvance(expectedDiagnostics);
+                        continue;
+                    }
+                }
+                else {
+                    boolean withNewInference = CollectionsKt.all(currentExpected.diagnostics, diagnostic -> diagnostic.withNewInference);
+                    if (withNewInference) {
+                        missingDiagnostics(callbacks, currentExpected);
+                        currentExpected = safeAdvance(expectedDiagnostics);
+                        continue;
+                    }
+                }
+
                 if (currentActual == null) {
                     missingDiagnostics(callbacks, currentExpected);
                     currentExpected = safeAdvance(expectedDiagnostics);
@@ -301,8 +327,8 @@ public class CheckerTestUtil {
                     callbacks.wrongParametersDiagnostic(expectedDiagnostic, actualTextDiagnostic, expectedStart, expectedEnd);
                 }
 
-                actualDiagnostics.remove(actualDiagnostic);
                 diagnosticToInput.put(actualDiagnostic, expectedDiagnostic);
+                actualDiagnostics.remove(actualDiagnostic);
             }
             else {
                 callbacks.missingDiagnostic(expectedDiagnostic, expectedStart, expectedEnd);
@@ -375,7 +401,10 @@ public class CheckerTestUtil {
                     range.addDiagnostic(diagnosticTypeMatcher.group());
                 }
                 opened.push(range);
-                result.add(range);
+
+                if (!range.diagnostics.isEmpty()) {
+                    result.add(range);
+                }
             }
             offsetCompensation += matchedText.length();
         }
@@ -387,103 +416,130 @@ public class CheckerTestUtil {
     }
 
     public static StringBuffer addDiagnosticMarkersToText(@NotNull PsiFile psiFile, @NotNull Collection<ActualDiagnostic> diagnostics) {
-        return addDiagnosticMarkersToText(psiFile, diagnostics, Collections.emptyMap(), PsiElement::getText);
+        return addDiagnosticMarkersToText(psiFile, diagnostics, Collections.emptyMap(), PsiElement::getText, Collections.emptyList(), false);
     }
 
     public static StringBuffer addDiagnosticMarkersToText(
             @NotNull PsiFile psiFile,
             @NotNull Collection<ActualDiagnostic> diagnostics,
             @NotNull Map<ActualDiagnostic, TextDiagnostic> diagnosticToExpectedDiagnostic,
-            @NotNull Function<PsiFile, String> getFileText
+            @NotNull Function<PsiFile, String> getFileText,
+            @NotNull Collection<PositionalTextDiagnostic> additionalDiagnostics,
+            boolean withNewInferenceDirective
     ) {
         String text = getFileText.fun(psiFile);
         StringBuffer result = new StringBuffer();
         diagnostics = CollectionsKt.filter(diagnostics, actualDiagnostic -> psiFile.equals(actualDiagnostic.getFile()));
-        if (!diagnostics.isEmpty()) {
-            List<DiagnosticDescriptor> diagnosticDescriptors = getSortedDiagnosticDescriptors(diagnostics);
+        if (diagnostics.isEmpty() && additionalDiagnostics.isEmpty()) {
+            result.append(text);
+            return result;
+        }
 
-            Stack<DiagnosticDescriptor> opened = new Stack<>();
-            ListIterator<DiagnosticDescriptor> iterator = diagnosticDescriptors.listIterator();
-            DiagnosticDescriptor currentDescriptor = iterator.next();
+        List<DiagnosticDescriptor> diagnosticDescriptors = getSortedDiagnosticDescriptors(diagnostics, additionalDiagnostics, withNewInferenceDirective);
 
-            for (int i = 0; i < text.length(); i++) {
-                char c = text.charAt(i);
-                while (!opened.isEmpty() && i == opened.peek().end) {
-                    closeDiagnosticString(result);
-                    opened.pop();
-                }
-                while (currentDescriptor != null && i == currentDescriptor.start) {
-                    openDiagnosticsString(result, currentDescriptor, diagnosticToExpectedDiagnostic);
-                    if (currentDescriptor.getEnd() == i) {
-                        closeDiagnosticString(result);
-                    }
-                    else {
-                        opened.push(currentDescriptor);
-                    }
-                    if (iterator.hasNext()) {
-                        currentDescriptor = iterator.next();
-                    }
-                    else {
-                        currentDescriptor = null;
-                    }
-                }
-                result.append(c);
-            }
+        Stack<DiagnosticDescriptor> opened = new Stack<>();
+        ListIterator<DiagnosticDescriptor> iterator = diagnosticDescriptors.listIterator();
+        DiagnosticDescriptor currentDescriptor = iterator.next();
 
-            if (currentDescriptor != null) {
-                assert currentDescriptor.start == text.length();
-                assert currentDescriptor.end == text.length();
-                openDiagnosticsString(result, currentDescriptor, diagnosticToExpectedDiagnostic);
-                opened.push(currentDescriptor);
-            }
-
-            while (!opened.isEmpty() && text.length() == opened.peek().end) {
-                closeDiagnosticString(result);
+        for (int i = 0; i < text.length(); i++) {
+            char c = text.charAt(i);
+            while (!opened.isEmpty() && i == opened.peek().end) {
+                DiagnosticDescriptor diagnosticDescriptor = opened.peek();
+                closeDiagnosticString(result, diagnosticDescriptor, withNewInferenceDirective);
                 opened.pop();
             }
+            while (currentDescriptor != null && i == currentDescriptor.start) {
+                openDiagnosticsString(result, currentDescriptor, diagnosticToExpectedDiagnostic, withNewInferenceDirective);
+                if (currentDescriptor.getEnd() == i) {
+                    closeDiagnosticString(result, currentDescriptor, withNewInferenceDirective);
+                }
+                else {
+                    opened.push(currentDescriptor);
+                }
+                if (iterator.hasNext()) {
+                    currentDescriptor = iterator.next();
+                }
+                else {
+                    currentDescriptor = null;
+                }
+            }
+            result.append(c);
+        }
 
-            assert opened.isEmpty() : "Stack is not empty: " + opened;
+        if (currentDescriptor != null) {
+            assert currentDescriptor.start == text.length();
+            assert currentDescriptor.end == text.length();
+            openDiagnosticsString(result, currentDescriptor, diagnosticToExpectedDiagnostic, withNewInferenceDirective);
+            opened.push(currentDescriptor);
         }
-        else {
-            result.append(text);
+
+        while (!opened.isEmpty() && text.length() == opened.peek().end) {
+            DiagnosticDescriptor diagnosticDescriptor = opened.peek();
+            closeDiagnosticString(result, diagnosticDescriptor, withNewInferenceDirective);
+            opened.pop();
         }
+
+        assert opened.isEmpty() : "Stack is not empty: " + opened;
+
         return result;
     }
 
     private static void openDiagnosticsString(
             StringBuffer result,
             DiagnosticDescriptor currentDescriptor,
-            Map<ActualDiagnostic, TextDiagnostic> diagnosticToExpectedDiagnostic
+            Map<ActualDiagnostic, TextDiagnostic> diagnosticToExpectedDiagnostic,
+            boolean withNewInferenceDirective
     ) {
         result.append("<!");
-        for (Iterator<ActualDiagnostic> iterator = currentDescriptor.diagnostics.iterator(); iterator.hasNext(); ) {
-            ActualDiagnostic diagnostic = iterator.next();
-            TextDiagnostic expectedDiagnostic = diagnosticToExpectedDiagnostic.get(diagnostic);
-            if (expectedDiagnostic != null) {
-                TextDiagnostic actualTextDiagnostic = TextDiagnostic.asTextDiagnostic(diagnostic);
-                if (compareTextDiagnostic(expectedDiagnostic, actualTextDiagnostic)) {
-                    result.append(expectedDiagnostic.asString());
+        if (currentDescriptor.positionalTextDiagnostic != null) {
+            TextDiagnostic diagnostic = currentDescriptor.positionalTextDiagnostic.getDiagnostic();
+            result.append(diagnostic.asString());
+        }
+        else {
+            for (Iterator<ActualDiagnostic> iterator = currentDescriptor.diagnostics.iterator(); iterator.hasNext(); ) {
+                ActualDiagnostic diagnostic = iterator.next();
+                TextDiagnostic expectedDiagnostic = diagnosticToExpectedDiagnostic.get(diagnostic);
+                if (expectedDiagnostic != null) {
+                    TextDiagnostic actualTextDiagnostic = TextDiagnostic.asTextDiagnostic(diagnostic);
+                    if (compareTextDiagnostic(expectedDiagnostic, actualTextDiagnostic)) {
+                        result.append(expectedDiagnostic.asString());
+                    }
+                    else {
+                        result.append(actualTextDiagnostic.asString());
+                    }
                 }
                 else {
-                    result.append(actualTextDiagnostic.asString());
+                    if (diagnostic.withNewInference) {
+                        result.append("NI;");
+                    }
+                    if (diagnostic.platform != null) {
+                        result.append(diagnostic.platform);
+                        result.append(":");
+                    }
+                    result.append(diagnostic.getName());
                 }
-            }
-            else {
-                if (diagnostic.platform != null) {
-                    result.append(diagnostic.platform);
-                    result.append(":");
+                if (iterator.hasNext()) {
+                    if (withNewInferenceDirective) {
+                        result.append("!><!");
+                    }
+                    else {
+                        result.append(", ");
+                    }
                 }
-                result.append(diagnostic.getName());
-            }
-            if (iterator.hasNext()) {
-                result.append(", ");
             }
         }
         result.append("!>");
     }
 
-    private static void closeDiagnosticString(StringBuffer result) {
-        result.append("<!>");
+    private static void closeDiagnosticString(StringBuffer result, DiagnosticDescriptor diagnosticDescriptor, boolean withNewInferenceDirective) {
+        if (!withNewInferenceDirective || diagnosticDescriptor.positionalTextDiagnostic != null) {
+            result.append("<!>");
+            return;
+        }
+
+        for (ActualDiagnostic ignored : diagnosticDescriptor.diagnostics) {
+            result.append("<!>");
+        }
     }
 
     public static class AbstractDiagnosticForTests implements Diagnostic {
@@ -587,23 +643,43 @@ public class CheckerTestUtil {
     }
 
     @NotNull
-    private static List<DiagnosticDescriptor> getSortedDiagnosticDescriptors(@NotNull Collection<ActualDiagnostic> diagnostics) {
-        LinkedListMultimap<TextRange, ActualDiagnostic> diagnosticsGroupedByRanges = LinkedListMultimap.create();
-        for (ActualDiagnostic actualDiagnostic : diagnostics) {
-            Diagnostic diagnostic = actualDiagnostic.diagnostic;
-            if (!diagnostic.isValid()) continue;
-            for (TextRange textRange : diagnostic.getTextRanges()) {
-                diagnosticsGroupedByRanges.put(textRange, actualDiagnostic);
+    private static List<DiagnosticDescriptor> getSortedDiagnosticDescriptors(
+            @NotNull Collection<ActualDiagnostic> diagnostics,
+            @NotNull Collection<PositionalTextDiagnostic> additionalDiagnostics,
+            boolean isWithNewInference
+    ) {
+        List<DiagnosticDescriptor> diagnosticDescriptors = Lists.newArrayList();
+        if (isWithNewInference) {
+            for (ActualDiagnostic actualDiagnostic : diagnostics) {
+                for (TextRange range : actualDiagnostic.diagnostic.getTextRanges()) {
+                    diagnosticDescriptors.add(new DiagnosticDescriptor(range.getStartOffset(), range.getEndOffset(),
+                                                                       Collections.singletonList(actualDiagnostic)));
+                }
             }
         }
-        List<DiagnosticDescriptor> diagnosticDescriptors = Lists.newArrayList();
-        for (TextRange range : diagnosticsGroupedByRanges.keySet()) {
-            diagnosticDescriptors.add(
-                    new DiagnosticDescriptor(range.getStartOffset(), range.getEndOffset(), diagnosticsGroupedByRanges.get(range)));
+        else {
+            LinkedListMultimap<TextRange, ActualDiagnostic> diagnosticsGroupedByRanges = LinkedListMultimap.create();
+            for (ActualDiagnostic actualDiagnostic : diagnostics) {
+                Diagnostic diagnostic = actualDiagnostic.diagnostic;
+                if (!diagnostic.isValid()) continue;
+                for (TextRange textRange : diagnostic.getTextRanges()) {
+                    diagnosticsGroupedByRanges.put(textRange, actualDiagnostic);
+                }
+            }
+            for (TextRange range : diagnosticsGroupedByRanges.keySet()) {
+                diagnosticDescriptors.add(
+                        new DiagnosticDescriptor(range.getStartOffset(), range.getEndOffset(), diagnosticsGroupedByRanges.get(range)));
+            }
+        }
+        for (PositionalTextDiagnostic diagnostic : additionalDiagnostics) {
+            diagnosticDescriptors.add(new DiagnosticDescriptor(diagnostic));
         }
         diagnosticDescriptors.sort((d1, d2) -> {
-            // Start early -- go first; start at the same offset, the one who end later is the outer, i.e. goes first
-            return (d1.start != d2.start) ? d1.start - d2.start : d2.end - d1.end;
+            if (d1.start != d2.start) return d1.start - d2.start;
+            if (d1.end != d2.end) return d2.end - d1.end;
+            if (d1.isWithNewInference() && !d2.isWithNewInference()) return -1;
+            if (!d1.isWithNewInference() && d2.isWithNewInference()) return 1;
+            return 0;
         });
         return diagnosticDescriptors;
     }
@@ -612,11 +688,20 @@ public class CheckerTestUtil {
         private final int start;
         private final int end;
         private final List<ActualDiagnostic> diagnostics;
+        private final PositionalTextDiagnostic positionalTextDiagnostic;
 
         DiagnosticDescriptor(int start, int end, List<ActualDiagnostic> diagnostics) {
             this.start = start;
             this.end = end;
             this.diagnostics = diagnostics;
+            this.positionalTextDiagnostic = null;
+        }
+
+        DiagnosticDescriptor(PositionalTextDiagnostic positionalTextDiagnostic) {
+            this.start = positionalTextDiagnostic.getStart();
+            this.end = positionalTextDiagnostic.getEnd();
+            this.diagnostics = Collections.emptyList();
+            this.positionalTextDiagnostic = positionalTextDiagnostic;
         }
 
         public Map<ActualDiagnostic, TextDiagnostic> getTextDiagnosticsMap() {
@@ -638,15 +723,21 @@ public class CheckerTestUtil {
         public TextRange getTextRange() {
             return new TextRange(start, end);
         }
+
+        public boolean isWithNewInference() {
+            return positionalTextDiagnostic != null && positionalTextDiagnostic.getDiagnostic().withNewInference;
+        }
     }
 
     public static class ActualDiagnostic {
         public final Diagnostic diagnostic;
         public final String platform;
+        public final boolean withNewInference;
 
-        ActualDiagnostic(@NotNull Diagnostic diagnostic, @Nullable String platform) {
+        ActualDiagnostic(@NotNull Diagnostic diagnostic, @Nullable String platform, boolean withNewInference) {
             this.diagnostic = diagnostic;
             this.platform = platform;
+            this.withNewInference = withNewInference;
         }
 
         @NotNull
@@ -666,17 +757,21 @@ public class CheckerTestUtil {
             ActualDiagnostic other = (ActualDiagnostic) obj;
             // '==' on diagnostics is intentional here
             return other.diagnostic == diagnostic &&
-                   (other.platform == null ? platform == null : other.platform.equals(platform));
+                   (other.platform == null ? platform == null : other.platform.equals(platform)) &&
+                   (other.withNewInference == withNewInference);
         }
 
         @Override
         public int hashCode() {
-            return System.identityHashCode(diagnostic) * 31 + (platform != null ? platform.hashCode() : 0);
+            int result = System.identityHashCode(diagnostic);
+            result = 31 * result + (platform != null ? platform.hashCode() : 0);
+            result = 31 * result + (withNewInference ? 0 : 1);
+            return result;
         }
 
         @Override
         public String toString() {
-            return (platform != null ? platform + ":" : "") + diagnostic.toString();
+            return (withNewInference ? "NI;" : "") + (platform != null ? platform + ":" : "") + diagnostic.toString();
         }
     }
 
@@ -687,21 +782,25 @@ public class CheckerTestUtil {
             if (!matcher.find())
                 throw new IllegalArgumentException("Could not parse diagnostic: " + text);
 
-            String platformPrefix = matcher.group(1);
-            assert platformPrefix == null || platformPrefix.endsWith(":") : platformPrefix;
-            String platform = platformPrefix == null ? null : StringsKt.substringBeforeLast(platformPrefix, ":", platformPrefix);
+            boolean withNewInference = "NI".equals(extractDataBefore(matcher.group(1), ";"));
+            String platform = extractDataBefore(matcher.group(2), ":");
 
-            String name = matcher.group(2);
-            String parameters = matcher.group(3);
+            String name = matcher.group(3);
+            String parameters = matcher.group(4);
             if (parameters == null) {
-                return new TextDiagnostic(name, platform, null);
+                return new TextDiagnostic(name, platform, null, withNewInference);
             }
 
             List<String> parsedParameters = new SmartList<>();
             Matcher parametersMatcher = INDIVIDUAL_PARAMETER_PATTERN.matcher(parameters);
             while (parametersMatcher.find())
                 parsedParameters.add(unescape(parametersMatcher.group().trim()));
-            return new TextDiagnostic(name, platform, parsedParameters);
+            return new TextDiagnostic(name, platform, parsedParameters, withNewInference);
+        }
+
+        private static String extractDataBefore(@Nullable String prefix, @NotNull String anchor) {
+            assert prefix == null || prefix.endsWith(anchor) : prefix;
+            return prefix == null ? null : StringsKt.substringBeforeLast(prefix, anchor, prefix);
         }
 
         private static @NotNull String escape(@NotNull String s) {
@@ -722,9 +821,9 @@ public class CheckerTestUtil {
                 //noinspection unchecked
                 Object[] renderParameters = ((AbstractDiagnosticWithParametersRenderer) renderer).renderParameters(diagnostic);
                 List<String> parameters = ContainerUtil.map(renderParameters, Object::toString);
-                return new TextDiagnostic(diagnosticName, actualDiagnostic.platform, parameters);
+                return new TextDiagnostic(diagnosticName, actualDiagnostic.platform, parameters, actualDiagnostic.withNewInference);
             }
-            return new TextDiagnostic(diagnosticName, actualDiagnostic.platform, null);
+            return new TextDiagnostic(diagnosticName, actualDiagnostic.platform, null, actualDiagnostic.withNewInference);
         }
 
         @NotNull
@@ -733,11 +832,13 @@ public class CheckerTestUtil {
         private final String platform;
         @Nullable
         private final List<String> parameters;
+        private final boolean withNewInference;
 
-        public TextDiagnostic(@NotNull String name, @Nullable String platform, @Nullable List<String> parameters) {
+        public TextDiagnostic(@NotNull String name, @Nullable String platform, @Nullable List<String> parameters, boolean withNewInference) {
             this.name = name;
             this.platform = platform;
             this.parameters = parameters;
+            this.withNewInference = withNewInference;
         }
 
         @Nullable
@@ -755,6 +856,10 @@ public class CheckerTestUtil {
             return parameters;
         }
 
+        public boolean isWithNewInference() {
+            return withNewInference;
+        }
+
         @Override
         public boolean equals(Object o) {
             if (this == o) return true;
@@ -765,6 +870,7 @@ public class CheckerTestUtil {
             if (!name.equals(that.name)) return false;
             if (platform != null ? !platform.equals(that.platform) : that.platform != null) return false;
             if (parameters != null ? !parameters.equals(that.parameters) : that.parameters != null) return false;
+            if (withNewInference != that.withNewInference) return false;
 
             return true;
         }
@@ -774,12 +880,16 @@ public class CheckerTestUtil {
             int result = name.hashCode();
             result = 31 * result + (platform != null ? platform.hashCode() : 0);
             result = 31 * result + (parameters != null ? parameters.hashCode() : 0);
+            result = 31 * result + (withNewInference ? 0 : 1);
             return result;
         }
 
         @NotNull
         public String asString() {
             StringBuilder result = new StringBuilder();
+            if (withNewInference) {
+                result.append("NI;");
+            }
             if (platform != null) {
                 result.append(platform);
                 result.append(":");
@@ -822,6 +932,10 @@ public class CheckerTestUtil {
 
         public void setEnd(int end) {
             this.end = end;
+        }
+
+        public void addDiagnostic(TextDiagnostic diagnostic) {
+            diagnostics.add(diagnostic);
         }
 
         public void addDiagnostic(String diagnostic) {
