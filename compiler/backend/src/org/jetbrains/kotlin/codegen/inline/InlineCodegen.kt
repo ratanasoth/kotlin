@@ -18,12 +18,14 @@ package org.jetbrains.kotlin.codegen.inline
 
 import com.intellij.psi.PsiElement
 import com.intellij.util.ArrayUtil
+import org.jetbrains.kotlin.backend.common.isBuiltInCoroutineContext
+import org.jetbrains.kotlin.backend.common.isCoroutineImplDoResume
 import org.jetbrains.kotlin.builtins.BuiltInsPackageFragment
 import org.jetbrains.kotlin.codegen.*
 import org.jetbrains.kotlin.codegen.AsmUtil.getMethodAsmFlags
 import org.jetbrains.kotlin.codegen.AsmUtil.isPrimitive
-import org.jetbrains.kotlin.codegen.coroutines.createMethodNodeForSuspendCoroutineOrReturn
-import org.jetbrains.kotlin.codegen.coroutines.isBuiltInSuspendCoroutineOrReturnInJvm
+import org.jetbrains.kotlin.codegen.context.ClosureContext
+import org.jetbrains.kotlin.codegen.coroutines.*
 import org.jetbrains.kotlin.codegen.intrinsics.bytecode
 import org.jetbrains.kotlin.codegen.intrinsics.classId
 import org.jetbrains.kotlin.codegen.state.GenerationState
@@ -50,8 +52,6 @@ import org.jetbrains.kotlin.serialization.deserialization.descriptors.Deserializ
 import org.jetbrains.kotlin.types.expressions.DoubleColonLHS
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingUtils.isFunctionLiteral
 import org.jetbrains.kotlin.types.expressions.LabelResolver
-import org.jetbrains.kotlin.utils.DFS
-import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.org.objectweb.asm.Opcodes
 import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
@@ -225,6 +225,15 @@ abstract class InlineCodegen<out T: BaseExpressionCodegen>(
         return true
     }
 
+    private fun continuationIndex(): Int {
+        codegen as ExpressionCodegen
+        val functionDescriptor = codegen.context.functionDescriptor
+        if (codegen.context.parentContext is ClosureContext && functionDescriptor.isCoroutineImplDoResume()) return 0
+        val isStatic = AsmUtil.isStaticMethod(codegen.context.contextKind, functionDescriptor)
+        // 0 for this, and last for continuation
+        return functionDescriptor.valueParameters.size - 1 + (if (isStatic) 0 else 1)
+    }
+
     protected fun inlineCall(nodeAndSmap: SMAPAndMethodNode, callDefault: Boolean): InlineResult {
         assert(delayedHiddenWriting == null) { "'putHiddenParamsIntoLocals' should be called after 'processAndPutHiddenParameters(true)'" }
         defaultSourceMapper.callSiteMarker = CallSiteMarker(codegen.lastLineNumber)
@@ -250,6 +259,15 @@ abstract class InlineCodegen<out T: BaseExpressionCodegen>(
 
         if (shouldSpillStack) {
             addInlineMarker(codegen.v, true)
+        }
+
+        if (functionDescriptor.isBuiltInCoroutineContext()) {
+            invocationParamBuilder.addNextValueParameter(
+                    CONTINUATION_ASM_TYPE,
+                    false,
+                    StackValue.local(continuationIndex(), CONTINUATION_ASM_TYPE),
+                    0
+            )
         }
 
         val parameters = invocationParamBuilder.buildParameters()
@@ -458,25 +476,31 @@ abstract class InlineCodegen<out T: BaseExpressionCodegen>(
                 state: GenerationState,
                 sourceCompilerForInline: SourceCompilerForInline
         ): SMAPAndMethodNode {
-            if (isSpecialEnumMethod(functionDescriptor)) {
-                val arguments = resolvedCall!!.typeArguments
+            val res = when {
+                isSpecialEnumMethod(functionDescriptor) -> {
+                    val arguments = resolvedCall!!.typeArguments
 
-                val node = createSpecialEnumMethodBody(
-                        codegen,
-                        functionDescriptor.name.asString(),
-                        arguments.keys.single().defaultType,
-                        state.typeMapper
-                )
-                return SMAPAndMethodNode(node, SMAPParser.parseOrCreateDefault(null, null, "fake", -1, -1))
-            }
-            else if (functionDescriptor.isBuiltInSuspendCoroutineOrReturnInJvm()) {
-                return SMAPAndMethodNode(
+                    val node = createSpecialEnumMethodBody(
+                            codegen,
+                            functionDescriptor.name.asString(),
+                            arguments.keys.single().defaultType,
+                            state.typeMapper
+                    )
+                    SMAPAndMethodNode(node, SMAPParser.parseOrCreateDefault(null, null, "fake", -1, -1))
+                }
+                functionDescriptor.isBuiltInSuspendCoroutineOrReturnInJvm() -> SMAPAndMethodNode(
                         createMethodNodeForSuspendCoroutineOrReturn(
                                 functionDescriptor, state.typeMapper
                         ),
                         SMAPParser.parseOrCreateDefault(null, null, "fake", -1, -1)
                 )
+                functionDescriptor.isBuiltInCoroutineContext() -> SMAPAndMethodNode(
+                        createMethodNodeForCoroutineContext(functionDescriptor),
+                        SMAPParser.parseOrCreateDefault(null, null, "fake", -1, -1)
+                )
+                else -> null
             }
+            if (res != null) return res
 
             val asmMethod = if (callDefault)
                 state.typeMapper.mapDefaultMethod(functionDescriptor, sourceCompilerForInline.contextKind)
