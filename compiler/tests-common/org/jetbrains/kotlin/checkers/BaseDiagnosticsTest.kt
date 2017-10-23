@@ -130,6 +130,7 @@ abstract class BaseDiagnosticsTest : KotlinMultiFileTestWithJava<TestModule, Tes
         val checkLazyLog: Boolean
         private val markDynamicCalls: Boolean
         val dynamicCallDescriptors: List<DeclarationDescriptor> = ArrayList()
+        val withNewInferenceDirective: Boolean
 
         init {
             this.declareCheckType = CHECK_TYPE_DIRECTIVE in directives
@@ -197,7 +198,8 @@ abstract class BaseDiagnosticsTest : KotlinMultiFileTestWithJava<TestModule, Tes
                 bindingContext: BindingContext,
                 implementingModulesBindings: List<Pair<MultiTargetPlatform, BindingContext>>,
                 actualText: StringBuilder,
-                skipJvmSignatureDiagnostics: Boolean
+                skipJvmSignatureDiagnostics: Boolean,
+                newInferenceDirectiveDefined: Boolean
         ): Boolean {
             val ktFile = this.ktFile
             if (ktFile == null) {
@@ -213,15 +215,25 @@ abstract class BaseDiagnosticsTest : KotlinMultiFileTestWithJava<TestModule, Tes
                 computeJvmSignatureDiagnostics(bindingContext)
 
             val ok = booleanArrayOf(true)
+//            val withNewInferenceDirective = InTextDirectivesUtils.isDirectiveDefined(expectedText, "// WITH_NEW_INFERENCE")
+            val withNewInference = (customLanguageVersionSettings ?: LanguageVersionSettingsImpl.DEFAULT).supportsFeature(LanguageFeature.NewInference) &&
+                                   withNewInferenceDirective
             val diagnostics = ContainerUtil.filter(
                     CheckerTestUtil.getDiagnosticsIncludingSyntaxErrors(
-                            bindingContext, implementingModulesBindings, ktFile, markDynamicCalls, dynamicCallDescriptors
+                            bindingContext, implementingModulesBindings, ktFile, markDynamicCalls, dynamicCallDescriptors, withNewInference
                     ) + jvmSignatureDiagnostics,
                     { whatDiagnosticsToConsider.value(it.diagnostic) }
             )
 
+            val additionalDiagnostics = mutableListOf<PositionalTextDiagnostic>()
+
+
             val diagnosticToExpectedDiagnostic = CheckerTestUtil.diagnosticsDiff(diagnosedRanges, diagnostics, object : CheckerTestUtil.DiagnosticDiffCallbacks {
                 override fun missingDiagnostic(diagnostic: CheckerTestUtil.TextDiagnostic, expectedStart: Int, expectedEnd: Int) {
+                    if (diagnostic.isWithNewInference != withNewInference) {
+                        additionalDiagnostics.add(PositionalTextDiagnostic(diagnostic, expectedStart, expectedEnd))
+                        return
+                    }
                     val message = "Missing " + diagnostic.description + DiagnosticUtils.atLocation(ktFile, TextRange(expectedStart, expectedEnd))
                     System.err.println(message)
                     ok[0] = false
@@ -245,10 +257,14 @@ abstract class BaseDiagnosticsTest : KotlinMultiFileTestWithJava<TestModule, Tes
                     System.err.println(message)
                     ok[0] = false
                 }
+
+                override fun isWithNewInference(): Boolean = withNewInference
+
+                override fun isWithNewInferenceDirective(): Boolean = withNewInferenceDirective
             })
 
-            actualText.append(
-                    CheckerTestUtil.addDiagnosticMarkersToText(ktFile, diagnostics, diagnosticToExpectedDiagnostic, { file -> file.text })
+            actualText.append(CheckerTestUtil.addDiagnosticMarkersToText(
+                    ktFile, diagnostics, diagnosticToExpectedDiagnostic, { file -> file.text }, additionalDiagnostics, withNewInferenceDirective)
             )
 
             stripExtras(actualText)
@@ -262,13 +278,16 @@ abstract class BaseDiagnosticsTest : KotlinMultiFileTestWithJava<TestModule, Tes
             for (declaration in declarations) {
                 val diagnostics = getJvmSignatureDiagnostics(declaration, bindingContext.diagnostics,
                                                              GlobalSearchScope.allScope(project)) ?: continue
-                jvmSignatureDiagnostics.addAll(diagnostics.forElement(declaration).map { ActualDiagnostic(it, null) })
+                val withNewInference = (customLanguageVersionSettings ?: LanguageVersionSettingsImpl.DEFAULT).supportsFeature(LanguageFeature.NewInference)
+                jvmSignatureDiagnostics.addAll(diagnostics.forElement(declaration).map { ActualDiagnostic(it, null, withNewInference) })
             }
             return jvmSignatureDiagnostics
         }
 
         override fun toString(): String = ktFile?.name ?: "Java file"
     }
+
+//    data class DiagnosticWithPosition(val diagnostic: CheckerTestUtil.TextDiagnostic, val start: Int, val end: Int)
 
     companion object {
         val DIAGNOSTICS_DIRECTIVE = "DIAGNOSTICS"
