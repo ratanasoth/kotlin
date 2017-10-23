@@ -1940,6 +1940,12 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
             doTest(fileName);
         }
 
+        @TestMetadata("object.kt")
+        public void testObject() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/unusedReceiverParameter/object.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("operator.kt")
         public void testOperator() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/unusedReceiverParameter/operator.kt");
