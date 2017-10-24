@@ -38,7 +38,12 @@ fun Project.projectTest(taskName: String = "test", body: Test.() -> Unit = {}): 
                 }
             }
         }
+
+        val agent = tasks.findByPath(":test-instrumenter:jar")!!.outputs.files.singleFile
+        jvmArgs("-javaagent:$agent")
     }
+
+    dependsOn(":test-instrumenter:jar")
 
     jvmArgs("-ea", "-XX:+HeapDumpOnOutOfMemoryError", "-Xmx1100m", "-XX:+UseCodeCacheFlushing", "-XX:ReservedCodeCacheSize=128m", "-Djna.nosys=true")
     maxHeapSize = "1100m"
