@@ -145,7 +145,6 @@
       <option name="WHILE_BRACE_FORCE" value="1" />
       <option name="FOR_BRACE_FORCE" value="1" />
       <option name="FIELD_ANNOTATION_WRAP" value="0" />
-      <option name="PARENT_SETTINGS_INSTALLED" value="true" />
     </codeStyleSettings>
     <codeStyleSettings language="HTML">
       <indentOptions>
@@ -192,7 +191,6 @@
       <option name="WHILE_BRACE_FORCE" value="1" />
       <option name="FOR_BRACE_FORCE" value="1" />
       <option name="FIELD_ANNOTATION_WRAP" value="0" />
-      <option name="PARENT_SETTINGS_INSTALLED" value="true" />
       <indentOptions>
         <option name="TAB_SIZE" value="8" />
       </indentOptions>
@@ -280,7 +278,6 @@
       <option name="FINALLY_ON_NEW_LINE" value="true" />
       <option name="ALIGN_MULTILINE_PARAMETERS_IN_CALLS" value="true" />
       <option name="ALIGN_MULTILINE_BINARY_OPERATION" value="true" />
-      <option name="PARENT_SETTINGS_INSTALLED" value="true" />
     </codeStyleSettings>
   </code_scheme>
 </component>
