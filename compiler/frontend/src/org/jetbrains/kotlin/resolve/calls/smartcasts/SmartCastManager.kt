@@ -213,7 +213,6 @@ class SmartCastManager {
 
                     return SmartCastResult(dataFlowValue.type, immanentlyNotNull || dataFlowValue.isStable)
                 }
-                return checkAndRecordPossibleCast(dataFlowValue, nullableExpectedType, expression, c, call, recordExpressionType)
             }
 
             return null
