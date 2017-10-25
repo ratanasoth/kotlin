@@ -468,19 +468,19 @@ public inline fun max(a: Double, b: Double): Double = nativeMath.max(a, b)
 
 
 /**
- * Raises this value to the power [a].
+ * Raises this value to the power [x].
  *
  * Special cases:
- *   - `x.pow(0.0)` is `1.0`
- *   - `x.pow(1.0) == x`
- *   - `x.pow(NaN)` is `NaN`
- *   - `NaN.pow(a)` is `NaN` for `a != 0.0`
- *   - `x.pow(Inf)` is `NaN` for `abs(x) == 1.0`
- *   - `x.pow(a)` is `NaN` for `x < 0` and `a` is finite and not an integer
+ *   - `b.pow(0.0)` is `1.0`
+ *   - `b.pow(1.0) == b`
+ *   - `b.pow(NaN)` is `NaN`
+ *   - `NaN.pow(x)` is `NaN` for `x != 0.0`
+ *   - `b.pow(Inf)` is `NaN` for `abs(b) == 1.0`
+ *   - `b.pow(x)` is `NaN` for `b < 0` and `x` is finite and not an integer
  */
 @SinceKotlin("1.2")
 @InlineOnly
-public inline fun Double.pow(a: Double): Double = nativeMath.pow(this, a)
+public inline fun Double.pow(x: Double): Double = nativeMath.pow(this, x)
 
 /**
  * Raises this value to the integer power [n].
@@ -992,19 +992,19 @@ public inline fun max(a: Float, b: Float): Float = nativeMath.max(a, b)
 
 
 /**
- * Raises this value to the power [a].
+ * Raises this value to the power [x].
  *
  * Special cases:
- *   - `x.pow(0.0)` is `1.0`
- *   - `x.pow(1.0) == x`
- *   - `x.pow(NaN)` is `NaN`
- *   - `NaN.pow(a)` is `NaN` for `a != 0.0`
- *   - `x.pow(Inf)` is `NaN` for `abs(x) == 1.0`
- *   - `x.pow(a)` is `NaN` for `x < 0` and `a` is finite and not an integer
+ *   - `b.pow(0.0)` is `1.0`
+ *   - `b.pow(1.0) == b`
+ *   - `b.pow(NaN)` is `NaN`
+ *   - `NaN.pow(x)` is `NaN` for `x != 0.0`
+ *   - `b.pow(Inf)` is `NaN` for `abs(b) == 1.0`
+ *   - `b.pow(x)` is `NaN` for `b < 0` and `x` is finite and not an integer
  */
 @SinceKotlin("1.2")
 @InlineOnly
-public inline fun Float.pow(a: Float): Float = nativeMath.pow(this.toDouble(), a.toDouble()).toFloat()
+public inline fun Float.pow(x: Float): Float = nativeMath.pow(this.toDouble(), x.toDouble()).toFloat()
 
 /**
  * Raises this value to the integer power [n].
