@@ -17,8 +17,9 @@
 package org.jetbrains.kotlin.testFramework
 
 import com.intellij.mock.MockComponentManager
+import com.intellij.openapi.application.Application
 import com.intellij.util.containers.ContainerUtil
-import java.util.concurrent.ConcurrentHashMap
+import org.jetbrains.kotlin.test.testFramework.KtUsefulTestCase
 
 object MockComponentManagerCreationTracer {
 
@@ -26,7 +27,6 @@ object MockComponentManagerCreationTracer {
 
     @JvmStatic
     fun onCreate(manager: MockComponentManager) {
-        println("MockComponentManager created")
         creationTraceMap[manager] = Exception("Creation trace")
     }
 
@@ -35,6 +35,14 @@ object MockComponentManagerCreationTracer {
         if (manager.isDisposed) {
             val trace = creationTraceMap[manager] ?: return
             trace.printStackTrace(System.err)
+        }
+    }
+
+    @JvmStatic
+    fun diagnoseDisposedButNotClearedApplication(app: Application) {
+        if (app is MockComponentManager) {
+            KtUsefulTestCase.resetApplicationToNull()
+            throw IllegalStateException("Some test disposed, but forget to clear MockApplication", creationTraceMap[app])
         }
     }
 }
