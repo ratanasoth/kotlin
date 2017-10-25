@@ -1,4 +1,5 @@
 // !DIAGNOSTICS: -UNUSED_PARAMETER -UNUSED_ANONYMOUS_PARAMETER
+// !WITH_NEW_INFERENCE
 
 fun <T, R : Any> foo(body: (R?) -> T): T = fail()
 

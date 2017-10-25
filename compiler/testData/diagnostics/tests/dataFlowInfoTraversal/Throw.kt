@@ -1,3 +1,5 @@
+// !WITH_NEW_INFERENCE
+
 fun bar(x: Int): RuntimeException = RuntimeException(x.toString())
 
 fun foo() {

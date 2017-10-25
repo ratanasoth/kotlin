@@ -1,3 +1,5 @@
+// !WITH_NEW_INFERENCE
+
 import kotlin.reflect.KProperty
 
 class A {

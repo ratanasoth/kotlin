@@ -1,3 +1,5 @@
+// !WITH_NEW_INFERENCE
+
 
 class A {
     operator fun component1() = 1

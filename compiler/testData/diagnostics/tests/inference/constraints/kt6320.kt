@@ -1,4 +1,5 @@
 // !DIAGNOSTICS: -UNUSED_VARIABLE
+// !WITH_NEW_INFERENCE
 // AssertionError in ConstraintSystem(The constraint shouldn't contain different type variables on both sides: Y <: X)
 
 class A<X, Y : X>

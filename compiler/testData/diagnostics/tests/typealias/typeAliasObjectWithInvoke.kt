@@ -1,3 +1,5 @@
+// !WITH_NEW_INFERENCE
+
 object ObjectWithInvoke {
     operator fun invoke() = this
 }

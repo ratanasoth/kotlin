@@ -1,4 +1,5 @@
 // !DIAGNOSTICS: -UNUSED_PARAMETER
+// !WITH_NEW_INFERENCE
 
 class A<T> {
     operator fun plus(x: Out<T>): A<T> = this

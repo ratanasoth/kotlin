@@ -1,3 +1,5 @@
+// !WITH_NEW_INFERENCE
+
 fun f(<!UNUSED_PARAMETER!>a<!>: Boolean, <!UNUSED_PARAMETER!>b<!>: Int) {}
 
 fun foo(a: Any) {

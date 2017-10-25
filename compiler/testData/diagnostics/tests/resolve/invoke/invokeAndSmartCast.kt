@@ -1,3 +1,5 @@
+// !WITH_NEW_INFERENCE
+
 class A(val x: (String.() -> Unit)?)
 
 fun test(a: A) {

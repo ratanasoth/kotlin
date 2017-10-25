@@ -1,4 +1,5 @@
 // !DIAGNOSTICS: -UNUSED_PARAMETER, -SENSELESS_COMPARISON, -DEBUG_INFO_SMARTCAST
+// !WITH_NEW_INFERENCE
 
 fun takeNotNull(s: String) {}
 fun <T> notNull(): T = TODO()

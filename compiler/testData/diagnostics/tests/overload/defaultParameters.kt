@@ -1,5 +1,6 @@
 // !CHECK_TYPE
 // !DIAGNOSTICS: -UNUSED_EXPRESSION -UNUSED_PARAMETER -UNUSED_VARIABLE
+// !WITH_NEW_INFERENCE
 
 fun simple() = 1
 fun simple(a: Int = 3) = ""

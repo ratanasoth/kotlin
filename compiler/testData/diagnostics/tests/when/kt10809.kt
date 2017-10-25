@@ -1,4 +1,5 @@
 // !DIAGNOSTICS: -UNUSED_PARAMETER -DEBUG_INFO_SMARTCAST
+// !WITH_NEW_INFERENCE
 
 interface Data
 interface Item

@@ -1,3 +1,5 @@
+// !WITH_NEW_INFERENCE
+
 import java.util.*
 
 import java.io.*

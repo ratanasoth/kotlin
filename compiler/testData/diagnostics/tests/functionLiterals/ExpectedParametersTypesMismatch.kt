@@ -1,3 +1,5 @@
+// !WITH_NEW_INFERENCE
+
 package a
 
 fun foo0(f: () -> String) = f

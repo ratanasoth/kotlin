@@ -1,4 +1,5 @@
 // !LANGUAGE: +ExpectedTypeFromCast
+// !WITH_NEW_INFERENCE
 
 fun foo() = 1
 

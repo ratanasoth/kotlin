@@ -1,3 +1,5 @@
+// !WITH_NEW_INFERENCE
+
 interface Tr
 
 class A { companion object }

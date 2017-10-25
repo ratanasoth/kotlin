@@ -1,4 +1,5 @@
 // !DIAGNOSTICS: -UNUSED_VARIABLE -UNUSED_PARAMETER
+// !WITH_NEW_INFERENCE
 
 class TColl<T, C : Collection<T>>
 

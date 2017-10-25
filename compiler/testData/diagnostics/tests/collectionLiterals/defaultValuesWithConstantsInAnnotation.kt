@@ -1,4 +1,5 @@
 // !LANGUAGE: +ArrayLiteralsInAnnotations
+// !WITH_NEW_INFERENCE
 
 const val ONE = 1
 

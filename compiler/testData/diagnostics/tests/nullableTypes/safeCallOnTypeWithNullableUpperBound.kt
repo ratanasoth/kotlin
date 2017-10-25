@@ -1,3 +1,5 @@
+// !WITH_NEW_INFERENCE
+
 fun <T> test(t: T): String? {
     if (t != null) {
         return t<!UNNECESSARY_SAFE_CALL!>?.<!>toString()

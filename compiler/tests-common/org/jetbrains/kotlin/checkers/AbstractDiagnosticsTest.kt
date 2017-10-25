@@ -157,7 +157,7 @@ abstract class AbstractDiagnosticsTest : BaseDiagnosticsTest() {
         // main checks
         var ok = true
 
-        val newInferenceDirectiveDefined = InTextDirectivesUtils.isDirectiveDefined(originalTestFile, "// WITH_NEW_INFERENCE")
+        val newInferenceDirectiveDefined = InTextDirectivesUtils.isDirectiveDefined(originalTestFile, "// !WITH_NEW_INFERENCE")
         val actualText = StringBuilder()
         for (testFile in files) {
             val module = testFile.module

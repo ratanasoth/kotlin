@@ -1,3 +1,5 @@
+// !WITH_NEW_INFERENCE
+
 // See KT-10244: no intersection types in signatures
 open class B
 interface A

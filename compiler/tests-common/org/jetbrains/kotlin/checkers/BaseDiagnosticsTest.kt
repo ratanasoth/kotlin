@@ -139,6 +139,7 @@ abstract class BaseDiagnosticsTest : KotlinMultiFileTestWithJava<TestModule, Tes
             this.checkLazyLog = CHECK_LAZY_LOG_DIRECTIVE in directives || CHECK_LAZY_LOG_DEFAULT
             this.declareFlexibleType = EXPLICIT_FLEXIBLE_TYPES_DIRECTIVE in directives
             this.markDynamicCalls = MARK_DYNAMIC_CALLS_DIRECTIVE in directives
+            this.withNewInferenceDirective = "WITH_NEW_INFERENCE" in directives
             if (fileName.endsWith(".java")) {
                 // TODO: check there are no syntax errors in .java sources
                 this.createKtFile = lazyOf(null)
@@ -215,7 +216,7 @@ abstract class BaseDiagnosticsTest : KotlinMultiFileTestWithJava<TestModule, Tes
                 computeJvmSignatureDiagnostics(bindingContext)
 
             val ok = booleanArrayOf(true)
-//            val withNewInferenceDirective = InTextDirectivesUtils.isDirectiveDefined(expectedText, "// WITH_NEW_INFERENCE")
+//            val withNewInferenceDirective = InTextDirectivesUtils.isDirectiveDefined(expectedText, "// !WITH_NEW_INFERENCE")
             val withNewInference = (customLanguageVersionSettings ?: LanguageVersionSettingsImpl.DEFAULT).supportsFeature(LanguageFeature.NewInference) &&
                                    withNewInferenceDirective
             val diagnostics = ContainerUtil.filter(

@@ -1,3 +1,5 @@
+// !WITH_NEW_INFERENCE
+
 fun v(<!UNUSED_PARAMETER!>x<!> : Int, <!UNUSED_PARAMETER!>y<!> : String, vararg <!UNUSED_PARAMETER!>f<!> : Long) {}
 fun v1(vararg <!UNUSED_PARAMETER!>f<!> :  (Int) -> Unit) {}
 

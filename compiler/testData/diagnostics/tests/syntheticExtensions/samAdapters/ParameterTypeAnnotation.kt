@@ -1,3 +1,5 @@
+// !WITH_NEW_INFERENCE
+
 // FILE: KotlinFile.kt
 fun foo(javaInterface: JavaInterface) {
     javaInterface.doIt(<!NULL_FOR_NONNULL_TYPE!>null<!>) { }

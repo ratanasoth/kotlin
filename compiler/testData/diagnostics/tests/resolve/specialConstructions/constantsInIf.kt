@@ -1,4 +1,5 @@
 // !DIAGNOSTICS: -USELESS_ELVIS
+// !WITH_NEW_INFERENCE
 
 fun test() {
     bar(if (true) {

@@ -1,4 +1,5 @@
 // !CHECK_TYPE
+// !WITH_NEW_INFERENCE
 
 fun <T> array1(vararg a : T) = a
 

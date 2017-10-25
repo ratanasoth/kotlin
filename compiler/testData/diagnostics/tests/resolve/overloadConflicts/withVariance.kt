@@ -1,3 +1,5 @@
+// !WITH_NEW_INFERENCE
+
 object X1
 object X2
 

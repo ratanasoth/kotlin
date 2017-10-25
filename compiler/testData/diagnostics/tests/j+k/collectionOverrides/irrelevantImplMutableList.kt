@@ -1,3 +1,5 @@
+// !WITH_NEW_INFERENCE
+
 // FILE: AImpl.java
 
 import java.util.Collection;

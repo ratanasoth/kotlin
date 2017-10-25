@@ -1,4 +1,5 @@
 // !DIAGNOSTICS: -UNUSED_VARIABLE -UNUSED_PARAMETER
+// !WITH_NEW_INFERENCE
 
 fun <T> foo(a1: Array<T>, a2: Array<out T>): T = null!!
 

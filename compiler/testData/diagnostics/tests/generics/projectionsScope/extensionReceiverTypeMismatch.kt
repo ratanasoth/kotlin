@@ -1,3 +1,5 @@
+// !WITH_NEW_INFERENCE
+
 class A<T> {
     fun T.foo() {}
     fun Out<T>.bar() {}

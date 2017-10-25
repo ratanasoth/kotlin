@@ -1,3 +1,5 @@
+// !WITH_NEW_INFERENCE
+
 open class T {
     val x : Int? = null
 }

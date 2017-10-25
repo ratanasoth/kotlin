@@ -1,3 +1,5 @@
+// !WITH_NEW_INFERENCE
+
 // No supertype at all
 
 fun Any.extension(<!UNUSED_PARAMETER!>arg<!>: Any?) {}

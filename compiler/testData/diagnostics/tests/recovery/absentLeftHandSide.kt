@@ -1,3 +1,5 @@
+// !WITH_NEW_INFERENCE
+
 fun import() {
     <!FUNCTION_CALL_EXPECTED!>import<!> <!UNRESOLVED_REFERENCE!>a<!><!SYNTAX!>.<!><!DEBUG_INFO_MISSING_UNRESOLVED!>*<!><!SYNTAX!><!>
 }

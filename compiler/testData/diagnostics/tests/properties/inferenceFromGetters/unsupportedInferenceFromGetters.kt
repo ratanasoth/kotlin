@@ -1,4 +1,5 @@
 // !LANGUAGE: -ShortSyntaxForPropertyGetters
+// !WITH_NEW_INFERENCE
 
 // blockBodyGetter.kt
 <!UNSUPPORTED_FEATURE!>val x get() {

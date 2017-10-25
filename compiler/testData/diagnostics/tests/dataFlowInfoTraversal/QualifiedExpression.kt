@@ -1,3 +1,5 @@
+// !WITH_NEW_INFERENCE
+
 fun baz(x: Int): Int = x + 1
 
 class A {

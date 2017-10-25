@@ -1,4 +1,5 @@
 // !DIAGNOSTICS: -UNUSED_ANONYMOUS_PARAMETER
+// !WITH_NEW_INFERENCE
 package a
 
 interface Super

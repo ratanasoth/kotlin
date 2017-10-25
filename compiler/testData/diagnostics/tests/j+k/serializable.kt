@@ -1,3 +1,5 @@
+// !WITH_NEW_INFERENCE
+
 // FILE: B.kt
 
 import aa.A.use

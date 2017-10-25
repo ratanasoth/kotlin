@@ -1,3 +1,5 @@
+// !WITH_NEW_INFERENCE
+
 interface T {
     fun foo() {}
     fun buzz() {}

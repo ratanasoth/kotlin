@@ -1,3 +1,5 @@
+// !WITH_NEW_INFERENCE
+
 // JAVAC_EXPECTED_FILE
 // See also KT-10735
 fun test() {

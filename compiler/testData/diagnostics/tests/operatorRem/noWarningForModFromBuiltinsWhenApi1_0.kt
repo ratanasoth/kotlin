@@ -1,5 +1,6 @@
 // !API_VERSION: 1.0
 // !DIAGNOSTICS: -UNUSED_PARAMETER, -UNUSED_VARIABLE, -EXTENSION_SHADOWED_BY_MEMBER
+// !WITH_NEW_INFERENCE
 
 class Foo {
     operator fun rem(x: Int): Foo = Foo()

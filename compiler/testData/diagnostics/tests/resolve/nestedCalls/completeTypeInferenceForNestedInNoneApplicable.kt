@@ -1,3 +1,5 @@
+// !WITH_NEW_INFERENCE
+
 package h
 
 fun foo(i: Int) = i

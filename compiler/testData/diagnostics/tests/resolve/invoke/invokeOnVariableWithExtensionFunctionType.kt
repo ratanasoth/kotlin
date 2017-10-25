@@ -1,3 +1,5 @@
+// !WITH_NEW_INFERENCE
+
 // FILE: 1.kt
 package fooIsExtension
 

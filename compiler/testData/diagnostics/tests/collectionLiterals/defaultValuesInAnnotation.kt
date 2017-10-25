@@ -1,4 +1,5 @@
 // !LANGUAGE: +ArrayLiteralsInAnnotations
+// !WITH_NEW_INFERENCE
 
 annotation class Foo(
         val a: Array<String> = ["/"],

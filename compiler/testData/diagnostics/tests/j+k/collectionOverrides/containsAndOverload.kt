@@ -1,4 +1,5 @@
 // !DIAGNOSTICS: -UNUSED_PARAMETER -UNUSED_VARIABLE -PARAMETER_NAME_CHANGED_ON_OVERRIDE
+// !WITH_NEW_INFERENCE
 
 // FILE: A.java
 abstract public class A implements java.util.Collection<String> {

@@ -1,3 +1,5 @@
+// !WITH_NEW_INFERENCE
+
 //FILE: bar.kt
 package bar
 

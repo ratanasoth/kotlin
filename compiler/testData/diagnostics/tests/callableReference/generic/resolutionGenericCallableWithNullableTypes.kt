@@ -1,5 +1,6 @@
 // !CHECK_TYPE
 // !DIAGNOSTICS: -UNUSED_PARAMETER, -UNUSED_VARIABLE
+// !WITH_NEW_INFERENCE
 
 fun foo(x: Int?) {}
 fun foo(y: String?) {}

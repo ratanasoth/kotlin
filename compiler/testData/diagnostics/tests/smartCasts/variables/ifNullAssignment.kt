@@ -1,3 +1,5 @@
+// !WITH_NEW_INFERENCE
+
 // See KT-13468, KT-13765
 
 fun basic(): String {

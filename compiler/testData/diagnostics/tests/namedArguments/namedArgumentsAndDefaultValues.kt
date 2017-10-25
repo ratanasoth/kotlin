@@ -1,3 +1,5 @@
+// !WITH_NEW_INFERENCE
+
 fun foo(<!UNUSED_PARAMETER!>a<!> : Int = 1, <!UNUSED_PARAMETER!>b<!> : String = "abc") {
 }
 

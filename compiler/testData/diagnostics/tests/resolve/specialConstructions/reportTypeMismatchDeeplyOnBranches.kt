@@ -1,3 +1,5 @@
+// !WITH_NEW_INFERENCE
+
 package b
 
 fun bar(i: Int) = i

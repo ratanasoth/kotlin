@@ -1,4 +1,5 @@
 // !CHECK_TYPE
+// !WITH_NEW_INFERENCE
 
 fun foo(x: Number, y: Int) {
     when (x) {

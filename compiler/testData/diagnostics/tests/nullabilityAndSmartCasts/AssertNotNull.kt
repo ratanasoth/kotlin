@@ -1,4 +1,5 @@
 // !CHECK_TYPE
+// !WITH_NEW_INFERENCE
 
 fun main(args : Array<String>) {
     val a : Int? = null

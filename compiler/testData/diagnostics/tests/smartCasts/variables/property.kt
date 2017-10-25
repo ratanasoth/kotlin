@@ -1,3 +1,5 @@
+// !WITH_NEW_INFERENCE
+
 class MyClass(var p: String?)
 
 fun bar(s: String): Int {

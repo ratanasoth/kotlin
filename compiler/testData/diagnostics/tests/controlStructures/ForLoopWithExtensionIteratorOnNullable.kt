@@ -1,3 +1,5 @@
+// !WITH_NEW_INFERENCE
+
 // See also KT-7428
 class Container<K>(val k: K)
 // iterator() must be an extension, otherwise code will not compile

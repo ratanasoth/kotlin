@@ -1,3 +1,5 @@
+// !WITH_NEW_INFERENCE
+
 fun foo(): String {
     var s: String?
     s = null

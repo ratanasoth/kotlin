@@ -1,4 +1,5 @@
 // !LANGUAGE: +BooleanElvisBoundSmartCasts
+// !WITH_NEW_INFERENCE
 // See KT-20752
 
 class Unstable {

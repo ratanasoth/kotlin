@@ -1,4 +1,5 @@
 // !DIAGNOSTICS: -UNUSED_VARIABLE, -UNSUPPORTED
+// !WITH_NEW_INFERENCE
 
 fun basicTypes() {
     val a: IntArray = [1]

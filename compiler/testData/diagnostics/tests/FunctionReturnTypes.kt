@@ -1,4 +1,5 @@
 // !DIAGNOSTICS: -UNREACHABLE_CODE
+// !WITH_NEW_INFERENCE
 
 fun none() {}
 

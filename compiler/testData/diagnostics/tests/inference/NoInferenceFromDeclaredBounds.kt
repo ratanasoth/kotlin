@@ -1,3 +1,5 @@
+// !WITH_NEW_INFERENCE
+
 fun <T: Any> fooT22() : T? {
   return null
 }

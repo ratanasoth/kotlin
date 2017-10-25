@@ -1,3 +1,5 @@
+// !WITH_NEW_INFERENCE
+
 @DslMarker
 @Target(AnnotationTarget.CLASS, AnnotationTarget.TYPEALIAS)
 annotation class XMarker

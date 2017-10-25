@@ -1,3 +1,5 @@
+// !WITH_NEW_INFERENCE
+
 // JAVAC_SKIP
 // FILE: JavaClass.java
 public class JavaClass {
