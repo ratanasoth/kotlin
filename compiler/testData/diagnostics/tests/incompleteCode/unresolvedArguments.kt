@@ -1,4 +1,5 @@
 //!DIAGNOSTICS: -UNUSED_PARAMETER
+// !WITH_NEW_INFERENCE
 
 fun <T> foo(i: Int, t: T) {}
 fun <T> foo(s: String, t: T) {}

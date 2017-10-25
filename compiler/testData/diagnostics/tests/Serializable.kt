@@ -1,3 +1,5 @@
+// !WITH_NEW_INFERENCE
+
 fun use(<!UNUSED_PARAMETER!>s<!>: java.io.Serializable) {
 
 }

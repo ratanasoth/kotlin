@@ -1,3 +1,5 @@
+// !WITH_NEW_INFERENCE
+
 fun idAny(x: Any) = x
 fun <T> id(x: T) = x
 fun idUnit(x: Unit) = x

@@ -1,5 +1,6 @@
 // !LANGUAGE: -RefinedSamAdaptersPriority
 // !CHECK_TYPE
+// !WITH_NEW_INFERENCE
 // FILE: A.java
 public class A {
     public static int foo(Runnable r) { return 0; }

@@ -1,3 +1,5 @@
+// !WITH_NEW_INFERENCE
+
 // FILE: KotlinFile.kt
 class KotlinClass {
     public fun doSomething(runnable: Runnable) { runnable.run() }

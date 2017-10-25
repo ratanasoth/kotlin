@@ -1,4 +1,5 @@
 // !CHECK_TYPE
+// !WITH_NEW_INFERENCE
 
 // FILE: f.kt
 

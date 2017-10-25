@@ -1,3 +1,5 @@
+// !WITH_NEW_INFERENCE
+
 class Test {
     private fun <T : Any> T.self() = object {
         fun bar(): T {

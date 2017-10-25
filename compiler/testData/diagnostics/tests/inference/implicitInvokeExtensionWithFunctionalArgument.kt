@@ -1,5 +1,6 @@
 // !CHECK_TYPE
 // !DIAGNOSTICS: -UNUSED_PARAMETER, -UNUSED_VARIABLE
+// !WITH_NEW_INFERENCE
 
 class AbstractSelector<S, I>
 class SelectorFor<S>

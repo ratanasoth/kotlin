@@ -1,3 +1,5 @@
+// !WITH_NEW_INFERENCE
+
 fun fooInt(p: Int) = p
 fun fooLong(p: Long) = p
 fun fooByte(p: Byte) = p

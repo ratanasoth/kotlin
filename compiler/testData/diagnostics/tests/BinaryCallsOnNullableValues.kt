@@ -1,3 +1,5 @@
+// !WITH_NEW_INFERENCE
+
 class A() {
     override fun equals(other : Any?) : Boolean = false
 }

@@ -1,3 +1,5 @@
+// !WITH_NEW_INFERENCE
+
 // FILE: A.kt
 open class A {
     open fun String.foo(y: String?): Int = 1

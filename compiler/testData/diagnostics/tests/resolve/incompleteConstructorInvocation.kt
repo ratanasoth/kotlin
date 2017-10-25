@@ -1,3 +1,5 @@
+// !WITH_NEW_INFERENCE
+
 package p
 
 class X<V>(<!UNUSED_PARAMETER!>provider<!>: () -> V, <!UNUSED_PARAMETER!>trackValue<!>: Boolean) {

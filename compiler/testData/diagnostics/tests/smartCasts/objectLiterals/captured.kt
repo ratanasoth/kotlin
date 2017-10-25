@@ -1,3 +1,5 @@
+// !WITH_NEW_INFERENCE
+
 abstract class Runnable {
     abstract fun run()
 }

@@ -1,3 +1,5 @@
+// !WITH_NEW_INFERENCE
+
 fun Any?.foo(my: My) = my === this
 
 class My(val x: Any)

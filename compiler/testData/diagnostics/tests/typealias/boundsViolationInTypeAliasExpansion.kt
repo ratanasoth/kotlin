@@ -1,4 +1,5 @@
 // !DIAGNOSTICS: -UNUSED_VARIABLE -UNUSED_PARAMETER
+// !WITH_NEW_INFERENCE
 
 class Num<T : Number>
 class NumColl<T : Collection<Number>>

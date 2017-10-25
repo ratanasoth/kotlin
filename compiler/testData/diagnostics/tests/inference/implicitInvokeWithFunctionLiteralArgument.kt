@@ -1,5 +1,6 @@
 // !CHECK_TYPE
 // !DIAGNOSTICS: -UNUSED_PARAMETER, -UNUSED_VARIABLE
+// !WITH_NEW_INFERENCE
 
 class TestClass {
     inline operator fun <T> invoke(task: () -> T) = task()

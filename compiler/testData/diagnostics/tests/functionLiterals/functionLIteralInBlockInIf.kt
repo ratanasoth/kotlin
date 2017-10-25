@@ -1,4 +1,5 @@
 // !CHECK_TYPE
+// !WITH_NEW_INFERENCE
 fun test() {
     val a = if (true) {
         val x = 1

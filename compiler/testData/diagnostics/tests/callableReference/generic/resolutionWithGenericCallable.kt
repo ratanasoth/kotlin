@@ -1,4 +1,5 @@
 // !DIAGNOSTICS: -UNUSED_PARAMETER, -UNUSED_VARIABLE
+// !WITH_NEW_INFERENCE
 
 fun test() {
     val a1: Array<Double.(Double) -> Double> = arrayOf(Double::plus, Double::minus)

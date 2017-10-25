@@ -1,4 +1,5 @@
 // !CHECK_TYPE
+// !WITH_NEW_INFERENCE
 
 //KT-948 Make type inference work with sure()/!!
 

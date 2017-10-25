@@ -1,3 +1,5 @@
+// !WITH_NEW_INFERENCE
+
 package test
 
 @BadAnnotation(<!CONSTANT_EXPECTED_TYPE_MISMATCH!>1<!>)

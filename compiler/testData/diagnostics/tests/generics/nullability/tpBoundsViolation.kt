@@ -1,5 +1,6 @@
 // !CHECK_TYPE
 // !DIAGNOSTICS: -UNUSED_PARAMETER,-UNUSED_VARIABLE
+// !WITH_NEW_INFERENCE
 
 class A<F> {
     fun <E : F> foo1(x: E) = x

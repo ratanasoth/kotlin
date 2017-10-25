@@ -1,3 +1,5 @@
+// !WITH_NEW_INFERENCE
+
 package b
 
 fun <T, R> foo(<!UNUSED_PARAMETER!>map<!>: Map<T, R>) : R = throw Exception()

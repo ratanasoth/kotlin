@@ -1,3 +1,5 @@
+// !WITH_NEW_INFERENCE
+
 val flag = true
 
 // type of a was checked by txt

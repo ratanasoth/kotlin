@@ -1,4 +1,5 @@
 // !CHECK_TYPE
+// !WITH_NEW_INFERENCE
 // FILE: EventListener.java
 public interface EventListener<E> {
     E handle(String x);

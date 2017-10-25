@@ -1,3 +1,5 @@
+// !WITH_NEW_INFERENCE
+
 package bar
 
 class Test {

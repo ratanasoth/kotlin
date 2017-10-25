@@ -1,3 +1,5 @@
+// !WITH_NEW_INFERENCE
+
 package typeInferenceExpectedTypeMismatch
 
 import java.util.*

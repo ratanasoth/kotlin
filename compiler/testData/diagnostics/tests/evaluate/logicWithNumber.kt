@@ -1,3 +1,5 @@
+// !WITH_NEW_INFERENCE
+
 fun bar() {
     false and false
 }

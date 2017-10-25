@@ -1,3 +1,5 @@
+// !WITH_NEW_INFERENCE
+
 //KT-352 Function variable declaration type isn't checked inside a function body
 
 package kt352

@@ -1,5 +1,6 @@
 // !DIAGNOSTICS: -UNUSED_PARAMETER -UNUSED_ANONYMOUS_PARAMETER -UNUSED_VARIABLE
 // !CHECK_TYPE
+// !WITH_NEW_INFERENCE
 fun foo(block: () -> (() -> Int)) {}
 
 fun test() {

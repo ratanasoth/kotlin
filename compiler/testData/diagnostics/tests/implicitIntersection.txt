@@ -1,3 +1,5 @@
+// WITH_NEW_INFERENCE
+
 package
 
 public fun bar(/*0*/ b: B): kotlin.String

@@ -1,3 +1,5 @@
+// !WITH_NEW_INFERENCE
+
 // FILE: KotlinFile.kt
 abstract class KotlinClass : JavaClass(), KotlinInterface, JavaInterface {
     override fun getSomething1(): Int = 1

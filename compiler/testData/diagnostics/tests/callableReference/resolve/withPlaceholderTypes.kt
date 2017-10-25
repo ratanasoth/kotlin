@@ -1,4 +1,5 @@
 // !DIAGNOSTICS: -UNUSED_PARAMETER,-CONFLICTING_JVM_DECLARATIONS
+// !WITH_NEW_INFERENCE
 
 fun foo(i: Int) = "$i"
 fun foo(s: String) = s

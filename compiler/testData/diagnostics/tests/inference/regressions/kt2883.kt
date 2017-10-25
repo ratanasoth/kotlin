@@ -1,3 +1,5 @@
+// !WITH_NEW_INFERENCE
+
 //KT-2883 Type inference fails due to non-Unit value returned
 package a
 

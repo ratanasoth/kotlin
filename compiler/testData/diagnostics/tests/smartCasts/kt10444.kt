@@ -1,4 +1,5 @@
 // !DIAGNOSTICS: -UNUSED_PARAMETER
+// !WITH_NEW_INFERENCE
 // KT-10444 Do not ignore smart (unchecked) casts to the same classifier
 
 class Qwe<T : Any>(val a: T?) {

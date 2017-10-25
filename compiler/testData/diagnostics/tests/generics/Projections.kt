@@ -1,4 +1,5 @@
 // !CHECK_TYPE
+// !WITH_NEW_INFERENCE
 
 class In<in T>() {
     fun f(<!UNUSED_PARAMETER!>t<!> : T) : Unit {}

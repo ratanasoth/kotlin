@@ -1,3 +1,5 @@
+// !WITH_NEW_INFERENCE
+
 package a
 
 fun <R> foo (f: ()->R, r: MutableList<R>) = r.add(f())

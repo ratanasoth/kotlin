@@ -1,3 +1,5 @@
+// !WITH_NEW_INFERENCE
+
 // FILE: p/My.java
 
 package p;

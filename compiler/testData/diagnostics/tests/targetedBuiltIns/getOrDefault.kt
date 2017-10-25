@@ -1,3 +1,5 @@
+// !WITH_NEW_INFERENCE
+
 // FULL_JDK
 
 abstract class A : Map<Int, String>

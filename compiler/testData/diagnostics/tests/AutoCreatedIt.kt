@@ -1,3 +1,5 @@
+// !WITH_NEW_INFERENCE
+
 fun text() {
     "direct:a" to "mock:a"
     "direct:a" on {it.body == "<hello/>"} to "mock:a"

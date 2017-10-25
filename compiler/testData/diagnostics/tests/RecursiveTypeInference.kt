@@ -1,3 +1,5 @@
+// !WITH_NEW_INFERENCE
+
 // FILE: f.kt
 package a
     val foo = bar()

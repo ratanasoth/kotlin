@@ -1,4 +1,5 @@
 // !DIAGNOSTICS: -CONFLICTING_JVM_DECLARATIONS
+// !WITH_NEW_INFERENCE
 package f
 
 fun <R> h(<!UNUSED_PARAMETER!>f<!>: (Boolean) -> R) = 1

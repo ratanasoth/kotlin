@@ -1,4 +1,5 @@
 // !DIAGNOSTICS: -UNUSED_PARAMETER
+// !WITH_NEW_INFERENCE
 
 object OldMod {
     <!DEPRECATED_BINARY_MOD!>operator<!> fun mod(x: Int) {}

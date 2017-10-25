@@ -1,3 +1,5 @@
+// !WITH_NEW_INFERENCE
+
 open class MyClass private constructor(val x: Int) {
 
     protected constructor(x: String) : this(x.length)

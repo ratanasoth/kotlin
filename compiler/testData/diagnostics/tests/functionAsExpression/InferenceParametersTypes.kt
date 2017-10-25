@@ -1,5 +1,6 @@
 // !CHECK_TYPE
 // !DIAGNOSTICS: -UNUSED_PARAMETER -UNUSED_ANONYMOUS_PARAMETER -UNUSED_VARIABLE
+// !WITH_NEW_INFERENCE
 fun <T> listOf(): List<T> = null!!
 
 fun test(a: (Int) -> Int) {

@@ -1,3 +1,5 @@
+// WITH_NEW_INFERENCE
+
 package
 
 public fun bar1(/*0*/ a: Array2D<kotlin.Int> /* = kotlin.Array<kotlin.Array<kotlin.Int>> */): Array2D<out kotlin.Number> /* = kotlin.Array<kotlin.Array<out kotlin.Number>> */

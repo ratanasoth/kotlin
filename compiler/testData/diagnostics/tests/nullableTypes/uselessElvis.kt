@@ -1,4 +1,5 @@
 // !DIAGNOSTICS: -UNUSED_PARAMETER, -SENSELESS_COMPARISON, -DEBUG_INFO_SMARTCAST
+// !WITH_NEW_INFERENCE
 
 fun <T: Any?> test1(t: Any?): Any {
     return t <!UNCHECKED_CAST!>as T<!> ?: ""

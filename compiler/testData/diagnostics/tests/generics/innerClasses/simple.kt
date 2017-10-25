@@ -1,5 +1,6 @@
 // !CHECK_TYPE
 // !DIAGNOSTICS: -UNUSED_EXPRESSION -UNUSED_PARAMETER
+// !WITH_NEW_INFERENCE
 
 class Outer<E> {
     inner class Inner {

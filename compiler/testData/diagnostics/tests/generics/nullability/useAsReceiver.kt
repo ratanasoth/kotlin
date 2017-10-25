@@ -1,4 +1,5 @@
 // !DIAGNOSTICS: -UNUSED_EXPRESSION,-UNUSED_VARIABLE
+// !WITH_NEW_INFERENCE
 
 fun <T : CharSequence?> T.bar1() {}
 fun CharSequence?.bar2() {}

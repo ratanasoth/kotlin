@@ -1,4 +1,5 @@
 // !DIAGNOSTICS: -UNUSED_PARAMETER, -EXTENSION_SHADOWED_BY_MEMBER
+// !WITH_NEW_INFERENCE
 
 open class Example {
     fun invoke() = 0

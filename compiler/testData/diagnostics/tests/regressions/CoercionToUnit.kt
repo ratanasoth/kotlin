@@ -1,3 +1,5 @@
+// !WITH_NEW_INFERENCE
+
 fun foo(<!UNUSED_PARAMETER!>u<!> : Unit) : Int = 1
 
 fun test() : Int {

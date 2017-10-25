@@ -1,4 +1,5 @@
 // !DIAGNOSTICS: -UNUSED_VARIABLE, -UNUSED_PARAMETER
+// !WITH_NEW_INFERENCE
 
 fun foo(i: Int) {}
 fun foo(s: String) {}

@@ -1,3 +1,5 @@
+// !WITH_NEW_INFERENCE
+
 open class C<T>
 
 typealias CStar = C<*>

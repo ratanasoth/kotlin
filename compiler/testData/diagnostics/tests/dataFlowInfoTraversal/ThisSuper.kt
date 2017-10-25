@@ -1,3 +1,5 @@
+// !WITH_NEW_INFERENCE
+
 open class Base {
     fun bar(x: Int): Int = x + 1
 }
