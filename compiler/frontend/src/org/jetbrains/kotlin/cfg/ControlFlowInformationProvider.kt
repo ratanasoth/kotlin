@@ -367,7 +367,7 @@ class ControlFlowInformationProvider private constructor(
                     }
                 }
                 is VariableDescriptor ->
-                    if (!variableDescriptor.isLateInit) {
+                    if (!variableDescriptor.isLateInit && diagnosticSuppressor.shouldReportUninitializedVariable(variableDescriptor)) {
                         report(Errors.UNINITIALIZED_VARIABLE.on(element, variableDescriptor), ctxt)
                     }
             }

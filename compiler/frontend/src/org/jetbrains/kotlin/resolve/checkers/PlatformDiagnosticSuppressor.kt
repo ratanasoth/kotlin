@@ -26,9 +26,13 @@ interface PlatformDiagnosticSuppressor {
 
     fun shouldReportNoBody(descriptor: CallableMemberDescriptor): Boolean
 
+    fun shouldReportUninitializedVariable(variable: VariableDescriptor): Boolean
+
     object Default : PlatformDiagnosticSuppressor {
         override fun shouldReportUnusedParameter(parameter: VariableDescriptor): Boolean = true
 
         override fun shouldReportNoBody(descriptor: CallableMemberDescriptor): Boolean = true
+
+        override fun shouldReportUninitializedVariable(variable: VariableDescriptor): Boolean = true
     }
 }
