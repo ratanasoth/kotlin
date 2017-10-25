@@ -16,48 +16,23 @@
 
 package org.jetbrains.kotlin.testFramework
 
-import org.jetbrains.org.objectweb.asm.ClassReader
-import org.jetbrains.org.objectweb.asm.ClassWriter
-import org.jetbrains.org.objectweb.asm.Label
-import org.jetbrains.org.objectweb.asm.Opcodes
-import org.jetbrains.org.objectweb.asm.tree.AbstractInsnNode
-import org.jetbrains.org.objectweb.asm.tree.ClassNode
-import org.jetbrains.org.objectweb.asm.tree.InsnList
-import org.jetbrains.org.objectweb.asm.tree.MethodNode
+import org.jetbrains.org.objectweb.asm.*
 import org.jetbrains.org.objectweb.asm.util.TraceClassVisitor
 import java.io.PrintWriter
 import java.lang.instrument.ClassFileTransformer
 import java.security.ProtectionDomain
-import kotlin.properties.Delegates
 
 
-class MockApplicationCreationTracingInstrumenter: ClassFileTransformer {
+class MockApplicationCreationTracingInstrumenter : ClassFileTransformer {
 
-
-    private fun createInstructionList(lambda: MethodNode.() -> Unit): InsnList {
-        val node = MethodNode()
-        lambda(node)
-        return node.instructions
-    }
-
-    private fun loadTransformAndSerialize(classfileBuffer: ByteArray, lambda: (ClassNode) -> Unit): ByteArray {
+    private fun loadTransformAndSerialize(classfileBuffer: ByteArray, lambda: (out: ClassVisitor) -> ClassVisitor): ByteArray {
         val reader = ClassReader(classfileBuffer)
-
-        val node = ClassNode()
-
-        reader.accept(node, 0)
-
-        println("org.jetbrains.kotlin.testFramework.MockApplicationCreationTracingInstrumenter: patched ${node.name}")
-
-        lambda(node)
 
         val writer = ClassWriter(ClassWriter.COMPUTE_FRAMES or ClassWriter.COMPUTE_MAXS)
 
-        val pv = TraceClassVisitor(PrintWriter(System.out.writer()))
+        val pv = TraceClassVisitor(writer, PrintWriter(System.out.writer()))
 
-        node.accept(pv)
-
-        node.accept(writer)
+        reader.accept(lambda(pv), 0)
 
         return writer.toByteArray()
     }
@@ -65,51 +40,63 @@ class MockApplicationCreationTracingInstrumenter: ClassFileTransformer {
     override fun transform(loader: ClassLoader, className: String, classBeingRedefined: Class<*>?, protectionDomain: ProtectionDomain, classfileBuffer: ByteArray): ByteArray {
 
         if (className == "com/intellij/mock/MockComponentManager") {
-            return loadTransformAndSerialize(classfileBuffer) { node ->
+            return loadTransformAndSerialize(classfileBuffer) { out ->
+                object : ClassVisitor(Opcodes.ASM6, out) {
+                    override fun visitMethod(access: Int, name: String, desc: String?, signature: String?, exceptions: Array<out String>?): MethodVisitor {
+                        val originalVisitor = super.visitMethod(access, name, desc, signature, exceptions)
 
-                val init = node.methods.first { it.name == "<init>" }
-
-                val callInstructions = createInstructionList {
-                    visitVarInsn(Opcodes.ALOAD, 0)
-                    visitMethodInsn(
-                            Opcodes.INVOKESTATIC,
-                            "org/jetbrains/kotlin/testFramework/MockComponentManagerCreationTracer",
-                            "onCreate",
-                            "(Lcom/intellij/mock/MockComponentManager;)V",
-                            false
-                    )
-                }
-
-
-                var returnNode: AbstractInsnNode by Delegates.notNull()
-                init.instructions.iterator().forEach {
-                    if (it.opcode == Opcodes.RETURN) {
-                        returnNode = it
+                        return if (name == "<init>") {
+                            object : MethodVisitor(Opcodes.ASM6, originalVisitor) {
+                                override fun visitInsn(opcode: Int) {
+                                    if (opcode == Opcodes.RETURN) {
+                                        visitVarInsn(Opcodes.ALOAD, 0)
+                                        visitMethodInsn(
+                                                Opcodes.INVOKESTATIC,
+                                                "org/jetbrains/kotlin/testFramework/MockComponentManagerCreationTracer",
+                                                "onCreate",
+                                                "(Lcom/intellij/mock/MockComponentManager;)V",
+                                                false
+                                        )
+                                    }
+                                    super.visitInsn(opcode)
+                                }
+                            }
+                        }
+                        else {
+                            originalVisitor
+                        }
                     }
                 }
-
-                init.instructions.insertBefore(returnNode, callInstructions)
             }
-        } else if (className == "com/intellij/mock/MockComponentManager$1") {
-            return loadTransformAndSerialize(classfileBuffer) { node ->
+        }
+        else if (className == "com/intellij/mock/MockComponentManager$1") {
+            return loadTransformAndSerialize(classfileBuffer) { out ->
+                object : ClassVisitor(Opcodes.ASM6, out) {
+                    override fun visitMethod(access: Int, name: String, desc: String?, signature: String?, exceptions: Array<out String>?): MethodVisitor {
+                        val originalVisitor = super.visitMethod(access, name, desc, signature, exceptions)
 
-                val method = node.methods.first { it.name == "getComponentInstance" }
-
-                val callInstructions = createInstructionList {
-                    visitLabel(Label())
-                    visitVarInsn(Opcodes.ALOAD, 0)
-                    visitFieldInsn(Opcodes.GETFIELD,"com/intellij/mock/MockComponentManager$1", "this$0", "Lcom/intellij/mock/MockComponentManager;")
-                    visitMethodInsn(
-                            Opcodes.INVOKESTATIC,
-                            "org/jetbrains/kotlin/testFramework/MockComponentManagerCreationTracer",
-                            "onGetComponentInstance",
-                            "(Lcom/intellij/mock/MockComponentManager;)V",
-                            false
-                    )
+                        return if (name == "getComponentInstance") {
+                            object : MethodVisitor(Opcodes.ASM6, originalVisitor) {
+                                override fun visitCode() {
+                                    super.visitCode()
+                                    visitLabel(Label())
+                                    visitVarInsn(Opcodes.ALOAD, 0)
+                                    visitFieldInsn(Opcodes.GETFIELD, "com/intellij/mock/MockComponentManager$1", "this$0", "Lcom/intellij/mock/MockComponentManager;")
+                                    visitMethodInsn(
+                                            Opcodes.INVOKESTATIC,
+                                            "org/jetbrains/kotlin/testFramework/MockComponentManagerCreationTracer",
+                                            "onGetComponentInstance",
+                                            "(Lcom/intellij/mock/MockComponentManager;)V",
+                                            false
+                                    )
+                                }
+                            }
+                        }
+                        else {
+                            originalVisitor
+                        }
+                    }
                 }
-
-                method.instructions.insert(callInstructions)
-                method.instructions.resetLabels()
             }
         }
 
