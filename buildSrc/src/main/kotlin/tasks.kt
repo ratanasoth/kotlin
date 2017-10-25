@@ -13,9 +13,6 @@ import java.lang.Character.isUpperCase
 
 fun Project.projectTest(taskName: String = "test", body: Test.() -> Unit = {}): Test = getOrCreateTask(taskName) {
     doFirst {
-        val agent = tasks.findByPath(":test-instrumenter:jar")!!.outputs.files.singleFile
-        jvmArgs("-javaagent:$agent")
-
         val patterns = filter.includePatterns + ((filter as? DefaultTestFilter)?.commandLineIncludePatterns ?: emptySet())
         if (patterns.isEmpty() || patterns.any { '*' in it }) return@doFirst
         patterns.forEach { pattern ->
@@ -41,6 +38,11 @@ fun Project.projectTest(taskName: String = "test", body: Test.() -> Unit = {}): 
                 }
             }
         }
+    }
+
+    doFirst {
+        val agent = tasks.findByPath(":test-instrumenter:jar")!!.outputs.files.singleFile
+        jvmArgs("-javaagent:$agent")
     }
 
     dependsOn(":test-instrumenter:jar")
