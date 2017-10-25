@@ -17,15 +17,16 @@
 package org.jetbrains.kotlin.testFramework
 
 import com.intellij.mock.MockComponentManager
+import com.intellij.util.containers.ContainerUtil
 import java.util.concurrent.ConcurrentHashMap
 
 object MockComponentManagerCreationTracer {
 
-    private val creationTraceMap = ConcurrentHashMap<MockComponentManager, Throwable>()
+    private val creationTraceMap = ContainerUtil.createConcurrentWeakMap<MockComponentManager, Throwable>()
 
     @JvmStatic
     fun onCreate(manager: MockComponentManager) {
-        println("Created")
+        println("MockComponentManager created")
         creationTraceMap[manager] = Exception("Creation trace")
     }
 

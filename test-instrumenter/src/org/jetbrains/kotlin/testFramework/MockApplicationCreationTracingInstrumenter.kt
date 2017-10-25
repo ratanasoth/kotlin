@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.testFramework
 
 import org.jetbrains.org.objectweb.asm.ClassReader
 import org.jetbrains.org.objectweb.asm.ClassWriter
+import org.jetbrains.org.objectweb.asm.Label
 import org.jetbrains.org.objectweb.asm.Opcodes
 import org.jetbrains.org.objectweb.asm.tree.AbstractInsnNode
 import org.jetbrains.org.objectweb.asm.tree.ClassNode
@@ -39,12 +40,14 @@ class MockApplicationCreationTracingInstrumenter: ClassFileTransformer {
         return node.instructions
     }
 
-    private fun loadTransfromAndSerialize(classfileBuffer: ByteArray, lambda: (ClassNode) -> Unit): ByteArray {
+    private fun loadTransformAndSerialize(classfileBuffer: ByteArray, lambda: (ClassNode) -> Unit): ByteArray {
         val reader = ClassReader(classfileBuffer)
 
         val node = ClassNode()
 
         reader.accept(node, 0)
+
+        println("org.jetbrains.kotlin.testFramework.MockApplicationCreationTracingInstrumenter: patched ${node.name}")
 
         lambda(node)
 
@@ -62,7 +65,7 @@ class MockApplicationCreationTracingInstrumenter: ClassFileTransformer {
     override fun transform(loader: ClassLoader, className: String, classBeingRedefined: Class<*>?, protectionDomain: ProtectionDomain, classfileBuffer: ByteArray): ByteArray {
 
         if (className == "com/intellij/mock/MockComponentManager") {
-            return loadTransfromAndSerialize(classfileBuffer) { node ->
+            return loadTransformAndSerialize(classfileBuffer) { node ->
 
                 val init = node.methods.first { it.name == "<init>" }
 
@@ -88,11 +91,13 @@ class MockApplicationCreationTracingInstrumenter: ClassFileTransformer {
                 init.instructions.insertBefore(returnNode, callInstructions)
             }
         } else if (className == "com/intellij/mock/MockComponentManager$1") {
-            return loadTransfromAndSerialize(classfileBuffer) { node ->
+            return loadTransformAndSerialize(classfileBuffer) { node ->
 
                 val method = node.methods.first { it.name == "getComponentInstance" }
 
                 val callInstructions = createInstructionList {
+                    visitLabel(Label())
+                    visitVarInsn(Opcodes.ALOAD, 0)
                     visitFieldInsn(Opcodes.GETFIELD,"com/intellij/mock/MockComponentManager$1", "this$0", "Lcom/intellij/mock/MockComponentManager;")
                     visitMethodInsn(
                             Opcodes.INVOKESTATIC,
@@ -104,6 +109,7 @@ class MockApplicationCreationTracingInstrumenter: ClassFileTransformer {
                 }
 
                 method.instructions.insert(callInstructions)
+                method.instructions.resetLabels()
             }
         }
 

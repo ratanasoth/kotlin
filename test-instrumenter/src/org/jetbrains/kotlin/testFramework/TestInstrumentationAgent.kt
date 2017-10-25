@@ -20,6 +20,7 @@ import java.lang.instrument.Instrumentation
 
 object TestInstrumentationAgent {
     @JvmStatic fun premain(arg: String?, instrumentation: Instrumentation) {
+        println("org.jetbrains.kotlin.testFramework.TestInstrumentationAgent.premain")
         instrumentation.addTransformer(MockApplicationCreationTracingInstrumenter())
     }
 }
