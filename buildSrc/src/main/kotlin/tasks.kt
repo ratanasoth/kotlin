@@ -42,7 +42,10 @@ fun Project.projectTest(taskName: String = "test", body: Test.() -> Unit = {}): 
 
     doFirst {
         val agent = tasks.findByPath(":test-instrumenter:jar")!!.outputs.files.singleFile
-        jvmArgs("-javaagent:$agent")
+
+        val args = project.findProperty("kotlin.test.instrumentation.args")?.let { "=$it" }.orEmpty()
+
+        jvmArgs("-javaagent:$agent$args")
     }
 
     dependsOn(":test-instrumenter:jar")

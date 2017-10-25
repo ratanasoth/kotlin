@@ -18,9 +18,17 @@ package org.jetbrains.kotlin.testFramework
 
 import java.lang.instrument.Instrumentation
 
+@Suppress("unused")
 object TestInstrumentationAgent {
-    @JvmStatic fun premain(arg: String?, instrumentation: Instrumentation) {
-        println("org.jetbrains.kotlin.testFramework.TestInstrumentationAgent.premain")
-        instrumentation.addTransformer(MockApplicationCreationTracingInstrumenter())
+    @JvmStatic
+    fun premain(arg: String?, instrumentation: Instrumentation) {
+
+        val arguments = arg.orEmpty().split(",")
+
+        val debug = "debug" in arguments
+        if (debug) {
+            println("org.jetbrains.kotlin.testFramework.TestInstrumentationAgent: premain")
+        }
+        instrumentation.addTransformer(MockApplicationCreationTracingInstrumenter(debug))
     }
 }

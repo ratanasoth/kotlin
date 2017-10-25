@@ -42,7 +42,7 @@ object MockComponentManagerCreationTracer {
     fun diagnoseDisposedButNotClearedApplication(app: Application) {
         if (app is MockComponentManager) {
             KtUsefulTestCase.resetApplicationToNull()
-            throw IllegalStateException("Some test disposed, but forget to clear MockApplication", creationTraceMap[app])
+            throw IllegalStateException("Some test disposed, but forgot to clear MockApplication", creationTraceMap[app])
         }
     }
 }

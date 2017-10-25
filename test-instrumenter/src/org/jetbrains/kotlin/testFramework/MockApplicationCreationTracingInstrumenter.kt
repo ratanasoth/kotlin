@@ -23,83 +23,112 @@ import java.lang.instrument.ClassFileTransformer
 import java.security.ProtectionDomain
 
 
-class MockApplicationCreationTracingInstrumenter : ClassFileTransformer {
+class MockApplicationCreationTracingInstrumenter(private val debugInfo: Boolean) : ClassFileTransformer {
 
     private fun loadTransformAndSerialize(classfileBuffer: ByteArray, lambda: (out: ClassVisitor) -> ClassVisitor): ByteArray {
         val reader = ClassReader(classfileBuffer)
 
         val writer = ClassWriter(ClassWriter.COMPUTE_FRAMES or ClassWriter.COMPUTE_MAXS)
 
-        val pv = TraceClassVisitor(writer, PrintWriter(System.out.writer()))
+        val pv = if (debugInfo) {
+            TraceClassVisitor(writer, PrintWriter(System.out.writer()))
+        }
+        else {
+            writer
+        }
 
         reader.accept(lambda(pv), 0)
 
         return writer.toByteArray()
     }
 
-    override fun transform(loader: ClassLoader, className: String, classBeingRedefined: Class<*>?, protectionDomain: ProtectionDomain, classfileBuffer: ByteArray): ByteArray {
+    private fun isMockComponentManagerCreationTracerCanBeLoaded(loader: ClassLoader): Boolean =
+            loader.getResource("org/jetbrains/kotlin/testFramework/MockComponentManagerCreationTracer.class") != null
 
-        if (className == "com/intellij/mock/MockComponentManager") {
-            return loadTransformAndSerialize(classfileBuffer) { out ->
-                object : ClassVisitor(Opcodes.ASM6, out) {
-                    override fun visitMethod(access: Int, name: String, desc: String?, signature: String?, exceptions: Array<out String>?): MethodVisitor {
-                        val originalVisitor = super.visitMethod(access, name, desc, signature, exceptions)
+    override fun transform(
+            loader: ClassLoader,
+            className: String,
+            classBeingRedefined: Class<*>?,
+            protectionDomain: ProtectionDomain,
+            classfileBuffer: ByteArray
+    ): ByteArray {
 
-                        return if (name == "<init>") {
-                            object : MethodVisitor(Opcodes.ASM6, originalVisitor) {
-                                override fun visitInsn(opcode: Int) {
-                                    if (opcode == Opcodes.RETURN) {
-                                        visitVarInsn(Opcodes.ALOAD, 0)
-                                        visitMethodInsn(
-                                                Opcodes.INVOKESTATIC,
-                                                "org/jetbrains/kotlin/testFramework/MockComponentManagerCreationTracer",
-                                                "onCreate",
-                                                "(Lcom/intellij/mock/MockComponentManager;)V",
-                                                false
-                                        )
-                                    }
-                                    super.visitInsn(opcode)
-                                }
-                            }
-                        }
-                        else {
-                            originalVisitor
-                        }
-                    }
-                }
-            }
+        if (className == "com/intellij/mock/MockComponentManager" && isMockComponentManagerCreationTracerCanBeLoaded(loader)) {
+            return loadTransformAndSerialize(classfileBuffer, this::transformMockComponentManager)
         }
-        else if (className == "com/intellij/mock/MockComponentManager$1") {
-            return loadTransformAndSerialize(classfileBuffer) { out ->
-                object : ClassVisitor(Opcodes.ASM6, out) {
-                    override fun visitMethod(access: Int, name: String, desc: String?, signature: String?, exceptions: Array<out String>?): MethodVisitor {
-                        val originalVisitor = super.visitMethod(access, name, desc, signature, exceptions)
-
-                        return if (name == "getComponentInstance") {
-                            object : MethodVisitor(Opcodes.ASM6, originalVisitor) {
-                                override fun visitCode() {
-                                    super.visitCode()
-                                    visitLabel(Label())
-                                    visitVarInsn(Opcodes.ALOAD, 0)
-                                    visitFieldInsn(Opcodes.GETFIELD, "com/intellij/mock/MockComponentManager$1", "this$0", "Lcom/intellij/mock/MockComponentManager;")
-                                    visitMethodInsn(
-                                            Opcodes.INVOKESTATIC,
-                                            "org/jetbrains/kotlin/testFramework/MockComponentManagerCreationTracer",
-                                            "onGetComponentInstance",
-                                            "(Lcom/intellij/mock/MockComponentManager;)V",
-                                            false
-                                    )
-                                }
-                            }
-                        }
-                        else {
-                            originalVisitor
-                        }
-                    }
-                }
-            }
+        else if (className == "com/intellij/mock/MockComponentManager$1" && isMockComponentManagerCreationTracerCanBeLoaded(loader)) {
+            return loadTransformAndSerialize(classfileBuffer, this::transformMockComponentManagerPicoContainer)
         }
 
         return classfileBuffer
+    }
+
+
+    private fun createMethodTransformClassVisitor(
+            out: ClassVisitor,
+            predicate: (name: String, desc: String) -> Boolean,
+            transform: (original: MethodVisitor) -> MethodVisitor
+    ): ClassVisitor {
+        return object : ClassVisitor(Opcodes.ASM6, out) {
+
+            var visited = false
+
+            override fun visitMethod(access: Int, name: String, desc: String, signature: String?, exceptions: Array<out String>?): MethodVisitor {
+                val original = super.visitMethod(access, name, desc, signature, exceptions)
+                return if (predicate(name, desc)) {
+                    assert(!visited)
+                    visited = true
+                    transform(original)
+                }
+                else {
+                    original
+                }
+            }
+
+            override fun visitEnd() {
+                super.visitEnd()
+                assert(visited)
+            }
+        }
+    }
+
+    private fun transformMockComponentManagerPicoContainer(out: ClassVisitor): ClassVisitor {
+        return createMethodTransformClassVisitor(out, { name, _ -> name == "getComponentInstance" }) { original ->
+            object : MethodVisitor(Opcodes.ASM6, original) {
+                override fun visitCode() {
+                    super.visitCode()
+                    visitLabel(Label())
+                    visitVarInsn(Opcodes.ALOAD, 0)
+                    visitFieldInsn(Opcodes.GETFIELD, "com/intellij/mock/MockComponentManager$1", "this$0", "Lcom/intellij/mock/MockComponentManager;")
+                    visitMethodInsn(
+                            Opcodes.INVOKESTATIC,
+                            "org/jetbrains/kotlin/testFramework/MockComponentManagerCreationTracer",
+                            "onGetComponentInstance",
+                            "(Lcom/intellij/mock/MockComponentManager;)V",
+                            false
+                    )
+                }
+            }
+        }
+    }
+
+    private fun transformMockComponentManager(out: ClassVisitor): ClassVisitor {
+        return createMethodTransformClassVisitor(out, { name, _ -> name == "<init>" }) { original ->
+            object : MethodVisitor(Opcodes.ASM6, original) {
+                override fun visitInsn(opcode: Int) {
+                    if (opcode == Opcodes.RETURN) {
+                        visitVarInsn(Opcodes.ALOAD, 0)
+                        visitMethodInsn(
+                                Opcodes.INVOKESTATIC,
+                                "org/jetbrains/kotlin/testFramework/MockComponentManagerCreationTracer",
+                                "onCreate",
+                                "(Lcom/intellij/mock/MockComponentManager;)V",
+                                false
+                        )
+                    }
+                    super.visitInsn(opcode)
+                }
+            }
+        }
     }
 }
