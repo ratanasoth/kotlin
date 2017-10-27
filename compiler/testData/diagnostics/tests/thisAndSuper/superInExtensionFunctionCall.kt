@@ -1,8 +1,6 @@
-// !WITH_NEW_INFERENCE
-
 // No supertype at all
 
-fun Any.extension(<!NI;UNUSED_PARAMETER!><!UNUSED_PARAMETER!>arg<!><!>: Any?) {}
+fun Any.extension(<!UNUSED_PARAMETER!>arg<!>: Any?) {}
 
 class A1 {
     fun test() {
