@@ -2,6 +2,10 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 apply { plugin("kotlin") }
 
+configureIntellijPlugin {
+    setExtraDependencies("intellij-core")
+}
+
 dependencies {
     testCompile(commonDep("junit:junit"))
     testCompile(projectDist(":kotlin-test:kotlin-test-jvm"))
@@ -14,15 +18,20 @@ dependencies {
     testCompile(project(":compiler:frontend.java"))
     testCompile(project(":compiler:cli"))
     testCompile(project(":compiler:serialization"))
-    testCompile(ideaSdkDeps("openapi", "idea", "util", "asm-all"))
     // deps below are test runtime deps, but made test compile to split compilation and running to reduce mem req
     testCompile(projectDist(":kotlin-stdlib"))
     testCompile(projectDist(":kotlin-script-runtime"))
     testCompile(projectDist(":kotlin-reflect"))
     testCompile(projectTests(":compiler"))
     testRuntime(projectRuntimeJar(":kotlin-preloader"))
-    testRuntime(ideaSdkCoreDeps("*.jar"))
-    testRuntime(ideaSdkDeps("*.jar"))
+}
+
+afterEvaluate {
+    dependencies {
+        testCompile(intellij { include("openapi.jar", "idea.jar", "util.jar", "asm-all.jar") })
+        testRuntime(intellijCoreJar())
+        testRuntime(intellij())
+    }
 }
 
 sourceSets {

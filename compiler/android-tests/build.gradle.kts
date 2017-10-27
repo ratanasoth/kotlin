@@ -3,6 +3,10 @@ apply { plugin("kotlin") }
 
 jvmTarget = "1.6"
 
+configureIntellijPlugin {
+    setExtraDependencies("jps-standalone", "jps-build-test")
+}
+
 dependencies {
     compile(project(":compiler:util"))
     compile(project(":compiler:cli"))
@@ -15,11 +19,14 @@ dependencies {
     testCompile(project(":compiler:frontend.java"))
     testCompile(projectTests(":jps-plugin"))
     testCompile(commonDep("junit:junit"))
-    testCompile(ideaSdkDeps("jps-model.jar", subdir = "jps"))
-    testCompile(ideaSdkDeps("groovy-all"))
-    testCompile(ideaSdkDeps("openapi", "idea"))
-    testCompile(ideaSdkDeps("jps-build-test", subdir = "jps/test"))
-    testCompile(ideaSdkDeps("jps-builders"))
+}
+
+afterEvaluate {
+    dependencies {
+        testCompile(intellij { include("openapi.jar", "idea.jar", "groovy-all.jar", "jps-builders.jar") })
+        testCompile(intellijExtra("jps-standalone") { include("jps-model.jar") })
+        testCompile(intellijExtra("jps-build-test"))
+    }
 }
 
 sourceSets {

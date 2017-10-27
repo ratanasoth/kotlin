@@ -3,6 +3,10 @@
 
 apply { plugin("kotlin") }
 
+configureIntellijPlugin {
+    setExtraDependencies("intellij-core")
+}
+
 dependencies {
     compile(project(":core"))
     compile(project(":core::util.runtime"))
@@ -25,9 +29,15 @@ dependencies {
     compile(project(":kotlin-test:kotlin-test-jvm"))
     compile(project(":compiler:tests-common-jvm6"))
     compile(commonDep("junit:junit"))
-    compile(ideaSdkCoreDeps("intellij-core"))
-    compile(ideaSdkDeps("openapi", "idea", "idea_rt"))
     compile(preloadedDeps("dx", subdir = "android-5.0/lib"))
+}
+
+afterEvaluate {
+    dependencies {
+        compile(intellij { include("openapi.jar", "idea.jar", "idea_rt.jar") })
+        compile(intellijCoreJar())
+        testRuntime(intellij())
+    }
 }
 
 sourceSets {
