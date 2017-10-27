@@ -3,6 +3,7 @@ buildscript {
     val buildSrcKotlinVersion: String by extra(findProperty("buildSrc.kotlin.version")?.toString() ?: embeddedKotlinVersion)
     extra["buildSrcKotlinRepo"] = findProperty("buildSrc.kotlin.repo")
     extra["versions.shadow"] = "2.0.1"
+    extra["versions.intellij-plugin"] = "0.3.0-SNAPSHOT"
 
     repositories {
         extra["buildSrcKotlinRepo"]?.let {
@@ -34,7 +35,8 @@ repositories {
         maven { setUrl(it) }
     }
     maven(url = "https://dl.bintray.com/kotlin/kotlin-dev") // for dex-method-list
-//    maven { setUrl("https://repo.gradle.org/gradle/libs-releases-local") }
+    maven(url = "https://oss.sonatype.org/content/repositories/snapshots/") // for intellij plugin
+    maven(url = "http://dl.bintray.com/jetbrains/intellij-plugin-service") // for intellij plugin
     jcenter()
 }
 
@@ -45,6 +47,7 @@ dependencies {
     // TODO: adding the dep to the plugin breaks the build unexpectedly, resolve and uncomment
 //    compile("org.jetbrains.kotlin:kotlin-gradle-plugin:${rootProject.extra["bootstrap_kotlin_version"]}")
     compile("com.github.jengelman.gradle.plugins:shadow:${property("versions.shadow")}")
+    compile("org.jetbrains.intellij.plugins:gradle-intellij-plugin:${property("versions.intellij-plugin")}")
 }
 
 samWithReceiver {
