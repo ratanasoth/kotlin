@@ -46,7 +46,6 @@ dependencies {
     testCompileOnly(projectDist(":kotlin-test:kotlin-test-jvm"))
     testCompileOnly(projectDist(":kotlin-test:kotlin-test-junit"))
     testCompile(project(":compiler.tests-common"))
-    testCompile(project(":compiler:tests-common-jvm6"))
     testCompile(project(":compiler:ir.ir2cfg"))
     testCompile(project(":compiler:ir.tree")) // used for deepCopyWithSymbols call that is removed by proguard from the compiler TODO: make it more straightforward
     otherCompilerModules.forEach {
@@ -85,8 +84,6 @@ projectTest {
     workingDir = rootDir
     systemProperty("kotlin.test.script.classpath", the<JavaPluginConvention>().sourceSets.getByName("test").output.classesDirs.joinToString(File.pathSeparator))
 }
-
-evaluationDependsOn(":compiler:tests-common-jvm6")
 
 fun Project.codegenTest(target: Int, jvm: Int,
                         jdk: String = "JDK_${if (jvm <= 8) "1" else ""}$jvm",
