@@ -36,6 +36,8 @@ val testDistProjects = listOf(
         ":kotlin-annotations-jvm",
         ":kotlin-annotations-android")
 
+val testJvm6ServerRuntime by configurations.creating
+
 dependencies {
     depDistProjects.forEach {
         testCompile(projectDist(it))
@@ -53,6 +55,8 @@ dependencies {
     testCompile(ideaSdkDeps("openapi", "idea", "util", "asm-all", "commons-httpclient-3.1-patched"))
     testRuntime(ideaSdkCoreDeps("*.jar"))
     testRuntime(ideaSdkDeps("*.jar"))
+
+    testJvm6ServerRuntime(project(":compiler:tests-common-jvm6"))
 }
 
 sourceSets {
@@ -109,7 +113,7 @@ fun Project.codegenTest(target: Int, jvm: Int,
 }
 
 codegenTest(target = 6, jvm = 6, jdk = "JDK_18") {
-    dependsOn(":compiler:tests-common-jvm6:build")
+    dependsOn(testJvm6ServerRuntime)
 
     //TODO make port flexible
     val port = "5100"
@@ -120,11 +124,7 @@ codegenTest(target = 6, jvm = 6, jdk = "JDK_18") {
         val jdkPath = project.property("JDK_16") ?: error("JDK_16 is not optional to run this test")
         val executable = "$jdkPath/bin/java"
         val main = "org.jetbrains.kotlin.test.clientserver.TestProcessServer"
-
-        val classpath = getSourceSetsFrom(":compiler:tests-common-jvm6")["main"].output.asPath + ":" +
-                getSourceSetsFrom(":kotlin-stdlib")["main"].output.asPath + ":" +
-                getSourceSetsFrom(":kotlin-stdlib")["builtins"].output.asPath + ":" +
-                getSourceSetsFrom(":kotlin-test:kotlin-test-jvm")["main"].output.asPath
+        val classpath = testJvm6ServerRuntime.asPath
 
         logger.debug("Server classpath: $classpath")
 
