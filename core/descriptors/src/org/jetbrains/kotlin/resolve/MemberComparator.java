@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.resolve;
 
 import kotlin.Unit;
 import kotlin.jvm.functions.Function1;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.renderer.AnnotationArgumentsRenderingPolicy;
@@ -89,10 +90,17 @@ public class MemberComparator implements Comparator<DeclarationDescriptor> {
 
         @Override
         public int compare(DeclarationDescriptor o1, DeclarationDescriptor o2) {
+            Integer compareInternal = compareInternal(o1, o2);
+            return compareInternal != null ? compareInternal : 0;
+        }
+
+        @Nullable
+        private static Integer compareInternal(DeclarationDescriptor o1, DeclarationDescriptor o2) {
             int prioritiesCompareTo = getDeclarationPriority(o2) - getDeclarationPriority(o1);
             if (prioritiesCompareTo != 0) {
                 return prioritiesCompareTo;
             }
+
             if (isEnumEntry(o1) && isEnumEntry(o2)) {
                 //never reorder enum entries
                 return 0;
@@ -103,20 +111,16 @@ public class MemberComparator implements Comparator<DeclarationDescriptor> {
                 return namesCompareTo;
             }
 
-            return 0;
+            // Might be equal
+            return null;
         }
     }
 
     @Override
     public int compare(DeclarationDescriptor o1, DeclarationDescriptor o2) {
-        int compare = NameAndTypeMemberComparator.INSTANCE.compare(o1, o2);
-        if (compare != 0) {
-            return compare;
-        }
-
-        if (isEnumEntry(o1) && isEnumEntry(o2)) {
-            //never reorder enum entries
-            return 0;
+        Integer typeAndNameCompareResult = NameAndTypeMemberComparator.compareInternal(o1, o2);
+        if (typeAndNameCompareResult != null) {
+            return typeAndNameCompareResult;
         }
 
         if (o1 instanceof TypeAliasDescriptor && o2 instanceof TypeAliasDescriptor) {
