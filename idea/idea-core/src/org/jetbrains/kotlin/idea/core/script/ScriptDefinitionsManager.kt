@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.idea.core.script
 
+import com.intellij.openapi.components.service
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.extensions.ExtensionPointName
 import com.intellij.openapi.extensions.Extensions
@@ -45,7 +46,6 @@ class IdeScriptDefinitionProvider(private val scriptDefinitionsManager: ScriptDe
         get() = scriptDefinitionsManager.getDefinitions()
 }
 
-// TODO: wrap getDefinitions calls into try catch
 class ScriptDefinitionsManager(private val project: Project) {
     private val lock = ReentrantReadWriteLock()
     private var definitionsByContributor = mutableMapOf<ScriptDefinitionContributor, List<KotlinScriptDefinition>>()
@@ -53,7 +53,7 @@ class ScriptDefinitionsManager(private val project: Project) {
 
     fun reloadDefinitionsBy(contributor: ScriptDefinitionContributor) = lock.write {
         if (contributor !in definitionsByContributor) error("Unknown contributor: ${contributor.id}")
-        definitionsByContributor[contributor] = contributor.getDefinitions()
+        definitionsByContributor[contributor] = contributor.safeGetDefinitions()
         updateDefinitions()
     }
 
@@ -70,12 +70,22 @@ class ScriptDefinitionsManager(private val project: Project) {
             Extensions.getArea(project).getExtensionPoint(ScriptDefinitionContributor.EP_NAME).extensions.toList()
 
     fun reloadScriptDefinitions() = lock.write {
-        definitionsByContributor = getContributors().associateByTo(mutableMapOf(), { it }, { it.getDefinitions() })
+        definitionsByContributor = getContributors().associateByTo(mutableMapOf(), { it }, { it.safeGetDefinitions() })
         updateDefinitions()
     }
 
     private fun updateDefinitions() {
         definitions = definitionsByContributor.values.flattenTo(mutableListOf())
+        // TODO: clear by script type/definition
+        project.service<ScriptDependenciesUpdater>().clear()
+    }
+
+    private fun ScriptDefinitionContributor.safeGetDefinitions(): List<KotlinScriptDefinition> = try {
+        getDefinitions()
+    }
+    catch (t: Throwable) {
+        // possibly log, see KT-19276
+        emptyList()
     }
 }
 
@@ -108,7 +118,6 @@ fun ScriptDefinitionContributor.loadDefinitionsFromTemplates(
     }
 }
 catch (ex: Throwable) {
-    LOG.info("Templates provider ${id} is invalid: ${ex.message}")
     emptyList()
 }
 
