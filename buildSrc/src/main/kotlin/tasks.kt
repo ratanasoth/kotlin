@@ -47,7 +47,7 @@ fun Project.projectTest(taskName: String = "test", body: Test.() -> Unit = {}): 
     environment("PROJECT_CLASSES_DIRS", the<JavaPluginConvention>().sourceSets.getByName("test").output.classesDirs.asPath)
     environment("PROJECT_BUILD_DIR", buildDir)
     systemProperty("jps.kotlin.home", rootProject.extra["distKotlinHomeDir"])
-    systemProperty("kotlin.ni", if (rootProject.hasProperty("enableNewInference")) "true" else "false")
+    systemProperty("kotlin.ni", if (rootProject.hasProperty("newInferenceTests")) "true" else "false")
     body()
 }
 
