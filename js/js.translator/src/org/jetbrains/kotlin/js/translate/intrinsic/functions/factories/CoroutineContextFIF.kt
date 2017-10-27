@@ -19,10 +19,8 @@ package org.jetbrains.kotlin.js.translate.intrinsic.functions.factories
 import org.jetbrains.kotlin.backend.common.isBuiltInCoroutineContext
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
-import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.js.backend.ast.JsExpression
 import org.jetbrains.kotlin.js.backend.ast.JsNameRef
-import org.jetbrains.kotlin.js.backend.ast.JsThisRef
 import org.jetbrains.kotlin.js.backend.ast.metadata.inlineStrategy
 import org.jetbrains.kotlin.js.descriptorUtils.isCoroutineLambda
 import org.jetbrains.kotlin.js.translate.callTranslator.CallInfo
@@ -30,6 +28,7 @@ import org.jetbrains.kotlin.js.translate.context.TranslationContext
 import org.jetbrains.kotlin.js.translate.intrinsic.functions.basic.FunctionIntrinsic
 import org.jetbrains.kotlin.js.translate.utils.JsAstUtils
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.inline.InlineStrategy
 
 object CoroutineContextFIF : FunctionIntrinsicFactory {
@@ -40,18 +39,14 @@ object CoroutineContextFIF : FunctionIntrinsicFactory {
 
     object Intrinsic : FunctionIntrinsic() {
         override fun apply(callInfo: CallInfo, arguments: List<JsExpression>, context: TranslationContext): JsExpression {
-            // These shall be already checked in front-end
-            val continuation = context.continuationParameterDescriptor ?: throw IllegalStateException("coroutineContext called from outside of coroutine")
-            val continuationDescriptor = continuation.type.constructor.declarationDescriptor as? ClassDescriptor ?: throw IllegalStateException("Continuation is not a class")
-            val contContexts = continuationDescriptor.unsubstitutedMemberScope.getContributedVariables(
-                    Name.identifier("context"), NoLookupLocation.FROM_BUILTINS
+            val continuation = context.continuationParameterDescriptor ?: error("coroutineContext called from outside of coroutine")
+            val continuationDescriptor = continuation.type.constructor.declarationDescriptor as? ClassDescriptor ?: error("Continuation is not a class")
+            val contContext = DescriptorUtils.getPropertyByName(continuationDescriptor.unsubstitutedMemberScope, Name.identifier("context"))
+            val res = JsNameRef(
+                    context.getNameForDescriptor(contContext),
+                    if (context.declarationDescriptor?.isCoroutineLambda == true) JsAstUtils.stateMachineReceiver()
+                    else context.getNameForDescriptor(continuation).makeRef()
             )
-            if (contContexts.isEmpty()) throw IllegalStateException("Continuation does not have context property")
-            if (contContexts.size > 1) throw IllegalStateException("Multiple contexts in continuation")
-            val res = if (context.declarationDescriptor?.isCoroutineLambda == true)
-                JsNameRef(context.getNameForDescriptor(contContexts.first()).ident, JsAstUtils.stateMachineReceiver())
-            else
-                JsNameRef(context.getNameForDescriptor(contContexts.first()).ident, context.getNameForDescriptor(continuation).makeRef())
             res.inlineStrategy = InlineStrategy.NOT_INLINE
             return res
         }
