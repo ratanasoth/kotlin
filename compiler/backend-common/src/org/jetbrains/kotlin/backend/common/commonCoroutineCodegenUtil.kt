@@ -57,17 +57,18 @@ fun FunctionDescriptor.getBuiltInSuspendCoroutineOrReturn() =
 fun FunctionDescriptor.isBuiltInCoroutineContext() =
         (this as? PropertyGetterDescriptor)?.correspondingProperty?.fqNameSafe == COROUTINE_CONTEXT_FQ_NAME
 
+fun FunctionDescriptor.coroutineImplClassDescriptor() = module.getPackage(COROUTINE_JVM_INTERNAL_PACKAGE_FQ_NAME).memberScope
+        .getContributedDescriptors { it == COROUTINE_IMPL_NAME }.singleOrNull() as ClassDescriptor
+
 fun FunctionDescriptor.isCoroutineImplDoResume(): Boolean {
-    fun coroutineImplClassDescriptor() = module.getPackage(COROUTINE_JVM_INTERNAL_PACKAGE_FQ_NAME).memberScope
-            .getContributedDescriptors { it == COROUTINE_IMPL_NAME }.singleOrNull() as ClassDescriptor
     fun originalDescriptor() = coroutineImplClassDescriptor().unsubstitutedMemberScope
-            .getContributedFunctions(DO_RESUME_NAME, NoLookupLocation.FROM_BACKEND).singleOrNull()
+            .getContributedFunctions(DO_RESUME_NAME, NoLookupLocation.FROM_BACKEND).singleOrNull() as FunctionDescriptor
     if (this.name != DO_RESUME_NAME) return false
     if (this.containingDeclaration !is ClassDescriptor) return false
     val supertypes = (this.containingDeclaration as ClassDescriptor).defaultType.supertypes()
     if (supertypes.none { it.constructor.declarationDescriptor?.fqNameSafe == COROUTINE_IMPL_FQ_NAME }) return false
     return OverridingUtil.DEFAULT.isOverridableBy(
-            originalDescriptor() as FunctionDescriptor,
+            originalDescriptor(),
             this,
             coroutineImplClassDescriptor()
     ).result == OverridingUtil.OverrideCompatibilityInfo.Result.OVERRIDABLE

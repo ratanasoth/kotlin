@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.codegen.inline
 
 import com.intellij.psi.PsiElement
 import com.intellij.util.ArrayUtil
+import org.jetbrains.kotlin.backend.common.coroutineImplClassDescriptor
 import org.jetbrains.kotlin.backend.common.isBuiltInCoroutineContext
 import org.jetbrains.kotlin.backend.common.isCoroutineImplDoResume
 import org.jetbrains.kotlin.builtins.BuiltInsPackageFragment
@@ -225,13 +226,17 @@ abstract class InlineCodegen<out T: BaseExpressionCodegen>(
         return true
     }
 
-    private fun continuationIndex(): Int {
+    private fun continuationValue(): StackValue {
+        assert(codegen is ExpressionCodegen) { "Expected ExpressionCodegen in coroutineContext inlining" }
         codegen as ExpressionCodegen
+
         val functionDescriptor = codegen.context.functionDescriptor
-        if (codegen.context.parentContext is ClosureContext && functionDescriptor.isCoroutineImplDoResume()) return 0
-        val isStatic = AsmUtil.isStaticMethod(codegen.context.contextKind, functionDescriptor)
-        // 0 for this, and last for continuation
-        return functionDescriptor.valueParameters.size - 1 + (if (isStatic) 0 else 1)
+        return if (codegen.context.parentContext is ClosureContext && functionDescriptor.isCoroutineImplDoResume())
+            StackValue.thisOrOuter(codegen, functionDescriptor.coroutineImplClassDescriptor(), true, false)
+        else
+            codegen.findLocalOrCapturedValue(
+                    functionDescriptor.valueParameters[functionDescriptor.valueParameters.size - 1]
+            ) ?: error("Continuation shall be last parameter of suspend function")
     }
 
     protected fun inlineCall(nodeAndSmap: SMAPAndMethodNode, callDefault: Boolean): InlineResult {
@@ -261,14 +266,8 @@ abstract class InlineCodegen<out T: BaseExpressionCodegen>(
             addInlineMarker(codegen.v, true)
         }
 
-        if (functionDescriptor.isBuiltInCoroutineContext()) {
-            invocationParamBuilder.addNextValueParameter(
-                    CONTINUATION_ASM_TYPE,
-                    false,
-                    StackValue.local(continuationIndex(), CONTINUATION_ASM_TYPE),
-                    0
-            )
-        }
+        if (functionDescriptor.isBuiltInCoroutineContext())
+            invocationParamBuilder.addNextValueParameter(CONTINUATION_ASM_TYPE, false, continuationValue(), 0)
 
         val parameters = invocationParamBuilder.buildParameters()
 
@@ -476,7 +475,7 @@ abstract class InlineCodegen<out T: BaseExpressionCodegen>(
                 state: GenerationState,
                 sourceCompilerForInline: SourceCompilerForInline
         ): SMAPAndMethodNode {
-            val res = when {
+            when {
                 isSpecialEnumMethod(functionDescriptor) -> {
                     val arguments = resolvedCall!!.typeArguments
 
@@ -486,21 +485,19 @@ abstract class InlineCodegen<out T: BaseExpressionCodegen>(
                             arguments.keys.single().defaultType,
                             state.typeMapper
                     )
-                    SMAPAndMethodNode(node, SMAPParser.parseOrCreateDefault(null, null, "fake", -1, -1))
+                    return SMAPAndMethodNode(node, SMAPParser.parseOrCreateDefault(null, null, "fake", -1, -1))
                 }
-                functionDescriptor.isBuiltInSuspendCoroutineOrReturnInJvm() -> SMAPAndMethodNode(
-                        createMethodNodeForSuspendCoroutineOrReturn(
-                                functionDescriptor, state.typeMapper
-                        ),
+                functionDescriptor.isBuiltInSuspendCoroutineOrReturnInJvm() ->
+                    return SMAPAndMethodNode(
+                        createMethodNodeForSuspendCoroutineOrReturn(functionDescriptor, state.typeMapper),
                         SMAPParser.parseOrCreateDefault(null, null, "fake", -1, -1)
-                )
-                functionDescriptor.isBuiltInCoroutineContext() -> SMAPAndMethodNode(
+                    )
+                functionDescriptor.isBuiltInCoroutineContext() ->
+                    return SMAPAndMethodNode(
                         createMethodNodeForCoroutineContext(functionDescriptor),
                         SMAPParser.parseOrCreateDefault(null, null, "fake", -1, -1)
-                )
-                else -> null
+                    )
             }
-            if (res != null) return res
 
             val asmMethod = if (callDefault)
                 state.typeMapper.mapDefaultMethod(functionDescriptor, sourceCompilerForInline.contextKind)

@@ -1,7 +1,12 @@
 package
 
+public fun builder(/*0*/ c: () -> kotlin.coroutines.experimental.CoroutineContext): () -> kotlin.Unit
+public fun builderSeveralArgs(/*0*/ c: (kotlin.Int, kotlin.Int, kotlin.Int) -> kotlin.coroutines.experimental.CoroutineContext): () -> kotlin.Unit
+public fun builderSuspend(/*0*/ c: suspend () -> kotlin.coroutines.experimental.CoroutineContext): () -> kotlin.Unit
+public fun builderSuspendSeveralArgs(/*0*/ c: suspend (kotlin.Int, kotlin.Int, kotlin.Int) -> kotlin.coroutines.experimental.CoroutineContext): () -> kotlin.Unit
 public suspend fun named(): kotlin.Unit
 public fun ordinal(): kotlin.Unit
+public fun test(): kotlin.Unit
 
 public final class A {
     public constructor A()

@@ -44,9 +44,15 @@ import org.jetbrains.kotlin.utils.addToStdlib.cast
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 object CoroutineSuspendCallChecker : CallChecker {
+    private val COROUTINE_CONTEXT_FQ_NAME = FqName("kotlin.coroutines.experimental.intrinsics.coroutineContext")
+
     override fun check(resolvedCall: ResolvedCall<*>, reportOn: PsiElement, context: CallCheckerContext) {
-        val descriptor = resolvedCall.candidateDescriptor as? FunctionDescriptor ?: return
-        if (!descriptor.isSuspend) return
+        val descriptor = resolvedCall.candidateDescriptor
+        when (descriptor) {
+            is FunctionDescriptor -> if (!descriptor.isSuspend) return
+            is PropertyDescriptor -> if (descriptor.fqNameSafe != COROUTINE_CONTEXT_FQ_NAME) return
+            else -> return
+        }
 
         val enclosingSuspendFunction = findEnclosingSuspendFunction(context)
 
@@ -55,7 +61,10 @@ object CoroutineSuspendCallChecker : CallChecker {
                 checkSuspensionApplicability(resolvedCall, enclosingSuspendFunction, context, reportOn)
             }
             else -> {
-                context.trace.report(Errors.ILLEGAL_SUSPEND_FUNCTION_CALL.on(reportOn, resolvedCall.candidateDescriptor))
+                when (descriptor) {
+                    is FunctionDescriptor -> context.trace.report(Errors.ILLEGAL_SUSPEND_FUNCTION_CALL.on(reportOn, resolvedCall.candidateDescriptor))
+                    is PropertyDescriptor -> context.trace.report(Errors.ILLEGAL_SUSPEND_PROPERTY_ACCESS.on(reportOn, resolvedCall.candidateDescriptor))
+                }
             }
         }
     }
@@ -99,26 +108,6 @@ object BuilderFunctionsCallChecker : CallChecker {
         val descriptor = resolvedCall.candidateDescriptor as? FunctionDescriptor ?: return
         if (descriptor.valueParameters.any { it.hasSuspendFunctionType }) {
             checkCoroutinesFeature(context.languageVersionSettings, context.trace, reportOn)
-        }
-    }
-}
-
-object SuspendValChecker : CallChecker {
-    private val COROUTINE_CONTEXT_FQ_NAME = FqName("kotlin.coroutines.experimental.intrinsics.coroutineContext")
-
-    override fun check(resolvedCall: ResolvedCall<*>, reportOn: PsiElement, context: CallCheckerContext) {
-        val descriptor = resolvedCall.candidateDescriptor as? PropertyDescriptor ?: return
-        if (descriptor.fqNameSafe != COROUTINE_CONTEXT_FQ_NAME) return
-
-        val enclosingSuspendFunction = findEnclosingSuspendFunction(context)
-
-        when {
-            enclosingSuspendFunction != null -> {
-                checkSuspensionApplicability(resolvedCall, enclosingSuspendFunction, context, reportOn)
-            }
-            else -> {
-                context.trace.report(Errors.ILLEGAL_SUSPEND_VAL_ACCESS.on(reportOn, resolvedCall.candidateDescriptor))
-            }
         }
     }
 }
