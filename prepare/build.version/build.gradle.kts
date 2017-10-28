@@ -7,45 +7,59 @@ val buildVersion by configurations.creating
 val buildNumber: String by rootProject.extra
 val kotlinVersion: String by rootProject.extra
 
-val writeBuildNumber by tasks.creating {
-    val versionFile = File(buildVersionFilePath)
-    inputs.property("version", buildNumber)
-    outputs.file(buildVersionFilePath)
+open class WriteVersionTask : DefaultTask() {
+    @Input
+    lateinit var version: String
+    @OutputFile
+    lateinit var versionFile: File
+}
+
+class PatternReplaceVersionTask : WriteVersionTask() {
+    @Input
+    lateinit var versionPattern: String
+
+    var replacement: (MatchResult) -> String = { version }
+    fun replacement(f: (MatchResult) -> String) { replacement = f }
+
+    @TaskAction
+    fun invoke() {
+        check(versionFile.isFile) { "Version file $versionFile is not found" }
+        val text = versionFile.readText()
+        val pattern = Regex(versionPattern)
+        val match = pattern.find(text) ?: error("Version pattern is missing")
+        val newValue = replacement(match)
+        versionFile.writeText(text.replaceRange(match.groups[1]!!.range, newValue))
+    }
+}
+
+val writeBuildNumber by tasks.creating(WriteVersionTask::class) {
+    versionFile = File(buildVersionFilePath)
+    version = buildNumber
     doLast {
         versionFile.parentFile.mkdirs()
         versionFile.writeText(buildNumber)
     }
 }
 
-val writeStdlibVersion by tasks.creating {
-    val versionFile = rootDir.resolve("libraries/stdlib/src/kotlin/util/KotlinVersion.kt")
-    inputs.property("version", kotlinVersion)
-    outputs.file(versionFile)
-    doLast {
+val writeStdlibVersion by tasks.creating(PatternReplaceVersionTask::class) {
+    version = kotlinVersion
+    versionFile = rootDir.resolve("libraries/stdlib/src/kotlin/util/KotlinVersion.kt")
+    versionPattern = """val CURRENT: KotlinVersion = KotlinVersion\((\d+, \d+, \d+)\)"""
+    replacement {
         val (major, minor, optPatch) = Regex("""^(\d+)\.(\d+)(\.\d+)?""").find(kotlinVersion)?.destructured ?: error("Cannot parse version")
         val newVersion = "$major, $minor, ${optPatch.trimStart('.').takeIf { it.isNotEmpty() } ?: "0" }"
-
-        check(versionFile.isFile) { "Version file $versionFile is not found" }
-        val text = versionFile.readText()
-        val pattern = Regex("""val CURRENT: KotlinVersion = KotlinVersion\((\d+, \d+, \d+)\)""")
-        val match = pattern.find(text) ?: error("Version pattern is missing")
         logger.lifecycle("Writing new standard library version components: $newVersion")
-        versionFile.writeText(text.replaceRange(match.groups[1]!!.range, newVersion))
+        newVersion
     }
 }
 
-val writeCompilerVersion by tasks.creating {
-    val versionFile = rootDir.resolve("core/util.runtime/src/org/jetbrains/kotlin/config/KotlinCompilerVersion.java")
-    inputs.property("version", kotlinVersion)
-    outputs.file(versionFile)
-
-    doLast {
-        check(versionFile.isFile) { "Version file $versionFile is not found" }
-        val text = versionFile.readText()
-        val pattern = Regex("""public static final String VERSION = "([^"]+)"""")
-        val match = pattern.find(text) ?: error("Version pattern is missing")
+val writeCompilerVersion by tasks.creating(PatternReplaceVersionTask::class) {
+    version = kotlinVersion
+    versionFile = rootDir.resolve("core/util.runtime/src/org/jetbrains/kotlin/config/KotlinCompilerVersion.java")
+    versionPattern = """public static final String VERSION = "([^"]+)""""
+    replacement {
         logger.lifecycle("Writing new compiler version: $kotlinVersion")
-        versionFile.writeText(text.replaceRange(match.groups[1]!!.range, kotlinVersion))
+        kotlinVersion
     }
 }
 
