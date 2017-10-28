@@ -45,6 +45,9 @@ object LightClassComputationControl {
             testBody()
         }
 
+        check(!expectedLightClassFqNames.contains(null as Any?)) { "null in expected: $expectedLightClassFqNames" }
+        check(!actualFqNames.contains(null as Any?)) { "null in actual: $actualFqNames" }
+
         if (expectedLightClassFqNames.toSortedSet() != actualFqNames.toSortedSet()) {
             Assert.fail(
                     "Expected to compute: ${expectedLightClassFqNames.prettyToString()}\n" +
