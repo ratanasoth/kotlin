@@ -8,8 +8,9 @@ val buildNumber: String by rootProject.extra
 val kotlinVersion: String by rootProject.extra
 
 val writeBuildNumber by tasks.creating {
+    val versionFile = File(buildVersionFilePath)
     inputs.property("version", buildNumber)
-    val versionFile = File(buildVersionFilePath).also { outputs.file(it) }
+    outputs.file(versionFile)
     doLast {
         versionFile.parentFile.mkdirs()
         versionFile.writeText(buildNumber)
@@ -20,30 +21,31 @@ fun replaceVersion(versionFile: File, versionPattern: String, replacement: (Matc
     check(versionFile.isFile) { "Version file $versionFile is not found" }
     val text = versionFile.readText()
     val pattern = Regex(versionPattern)
-    val match = pattern.find(text) ?: error("Version pattern is missing")
+    val match = pattern.find(text) ?: error("Version pattern is missing in file $versionFile")
     val newValue = replacement(match)
     versionFile.writeText(text.replaceRange(match.groups[1]!!.range, newValue))
 }
 
 val writeStdlibVersion by tasks.creating {
+    val versionFile = rootDir.resolve("libraries/stdlib/src/kotlin/util/KotlinVersion.kt")
     inputs.property("version", kotlinVersion)
-    val versionFile = rootDir.resolve("libraries/stdlib/src/kotlin/util/KotlinVersion.kt").also { outputs.file(it) }
+    outputs.file(versionFile)
     doLast {
         replaceVersion(versionFile, """val CURRENT: KotlinVersion = KotlinVersion\((\d+, \d+, \d+)\)""") {
-            val (major, minor, optPatch) = Regex("""^(\d+)\.(\d+)(\.\d+)?""").find(kotlinVersion)?.destructured ?: error("Cannot parse version")
-            val newVersion = "$major, $minor, ${optPatch.trimStart('.').takeIf { it.isNotEmpty() } ?: "0" }"
+            val (major, minor, _, optPatch) = Regex("""^(\d+)\.(\d+)(\.(\d+))?""").find(kotlinVersion)?.destructured ?: error("Cannot parse current version $kotlinVersion")
+            val newVersion = "$major, $minor, ${optPatch.takeIf { it.isNotEmpty() } ?: "0" }"
             newVersion.also { logger.lifecycle("Writing new standard library version components: $it") }
         }
     }
 }
 
 val writeCompilerVersion by tasks.creating {
+    val versionFile = rootDir.resolve("core/util.runtime/src/org/jetbrains/kotlin/config/KotlinCompilerVersion.java")
     inputs.property("version", kotlinVersion)
-    val versionFile = rootDir.resolve("core/util.runtime/src/org/jetbrains/kotlin/config/KotlinCompilerVersion.java").also { outputs.file(it) }
+    outputs.file(versionFile)
     doLast {
         replaceVersion(versionFile, """public static final String VERSION = "([^"]+)"""") {
-            logger.lifecycle("Writing new compiler version: $kotlinVersion")
-            kotlinVersion
+            kotlinVersion.also { logger.lifecycle("Writing new compiler version: $it") }
         }
     }
 }
