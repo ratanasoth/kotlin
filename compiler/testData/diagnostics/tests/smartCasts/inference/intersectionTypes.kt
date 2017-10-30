@@ -28,7 +28,7 @@ fun test(a: A, b: B, c: C) {
 
         val k = three(a, b, c)
         checkSubtype<A>(k)
-        checkSubtype<B>(<!NI;TYPE_MISMATCH!><!NI;TYPE_MISMATCH!><!TYPE_MISMATCH!>k<!><!><!>)
+        checkSubtype<B>(<!NI;TYPE_MISMATCH!><!TYPE_MISMATCH!>k<!><!>)
         val l: Int = <!NI;TYPE_MISMATCH!><!TYPE_INFERENCE_EXPECTED_TYPE_MISMATCH!>three(a, b, c)<!><!>
         
         use(d, e, f, g, h, k, l)
@@ -39,11 +39,11 @@ fun <T> foo(t: T, <!NI;UNUSED_PARAMETER!><!UNUSED_PARAMETER!>l<!><!>: MutableLis
 
 fun testErrorMessages(a: A, ml: MutableList<String>) {
     if (a is B && a is C) {
-        <!TYPE_INFERENCE_CONFLICTING_SUBSTITUTIONS!>foo<!>(<!NI;TYPE_MISMATCH!>a<!>, <!NI;TYPE_MISMATCH!><!NI;TYPE_MISMATCH!>ml<!><!>)
+        <!TYPE_INFERENCE_CONFLICTING_SUBSTITUTIONS!>foo<!>(a, <!NI;TYPE_MISMATCH!><!NI;TYPE_MISMATCH!>ml<!><!>)
     }
 
     if(a is C) {
-        <!TYPE_INFERENCE_CONFLICTING_SUBSTITUTIONS!>foo<!>(<!NI;TYPE_MISMATCH!>a<!>, <!NI;TYPE_MISMATCH!><!NI;TYPE_MISMATCH!>ml<!><!>)
+        <!TYPE_INFERENCE_CONFLICTING_SUBSTITUTIONS!>foo<!>(a, <!NI;TYPE_MISMATCH!><!NI;TYPE_MISMATCH!>ml<!><!>)
     }
 }
 
@@ -51,7 +51,7 @@ fun rr(s: String?) {
     if (s != null) {
         val l = arrayListOf("", <!NI;DEBUG_INFO_SMARTCAST!><!DEBUG_INFO_SMARTCAST!>s<!><!>)
         checkSubtype<MutableList<String>>(l)
-        checkSubtype<MutableList<String?>>(<!NI;TYPE_MISMATCH!><!NI;TYPE_MISMATCH!><!TYPE_MISMATCH!>l<!><!><!>)
+        checkSubtype<MutableList<String?>>(<!NI;TYPE_MISMATCH!><!TYPE_MISMATCH!>l<!><!>)
     }
 }
 

@@ -55,8 +55,8 @@ fun test(n: J?, nn: J) {
 
     J.staticSet(nn, nn, nn)
     J.staticSet(platformNN, platformNN, platformNN)
-    J.staticSet(<!NI;TYPE_MISMATCH!><!NI;TYPE_MISMATCH!><!TYPE_MISMATCH!>n<!><!><!>, n, n)
-    J.staticSet(<!NI;TYPE_MISMATCH!><!NI;TYPE_MISMATCH!><!TYPE_MISMATCH!>platformN<!><!><!>, platformN, platformN)
+    J.staticSet(<!NI;TYPE_MISMATCH!><!TYPE_MISMATCH!>n<!><!>, n, n)
+    J.staticSet(<!NI;TYPE_MISMATCH!><!TYPE_MISMATCH!>platformN<!><!>, platformN, platformN)
     J.staticSet(platformJ, platformJ, platformJ)
 
     J().nn = <!NI;TYPE_MISMATCH!><!TYPE_MISMATCH!>n<!><!>
@@ -79,13 +79,13 @@ fun test(n: J?, nn: J) {
 
     J().set(nn, nn, nn)
     J().set(platformNN, platformNN, platformNN)
-    J().set(<!NI;TYPE_MISMATCH!><!NI;TYPE_MISMATCH!><!TYPE_MISMATCH!>n<!><!><!>, n, n)
-    J().set(<!NI;TYPE_MISMATCH!><!NI;TYPE_MISMATCH!><!TYPE_MISMATCH!>platformN<!><!><!>, platformN, platformN)
+    J().set(<!NI;TYPE_MISMATCH!><!TYPE_MISMATCH!>n<!><!>, n, n)
+    J().set(<!NI;TYPE_MISMATCH!><!TYPE_MISMATCH!>platformN<!><!>, platformN, platformN)
     J().set(platformJ, platformJ, platformJ)
 
     J(nn, nn, nn)
     J(platformNN, platformNN, platformNN)
-    J(<!NI;TYPE_MISMATCH!><!NI;TYPE_MISMATCH!><!TYPE_MISMATCH!>n<!><!><!>, n, n)
-    J(<!NI;TYPE_MISMATCH!><!NI;TYPE_MISMATCH!><!TYPE_MISMATCH!>platformN<!><!><!>, platformN, platformN)
+    J(<!NI;TYPE_MISMATCH!><!TYPE_MISMATCH!>n<!><!>, n, n)
+    J(<!NI;TYPE_MISMATCH!><!TYPE_MISMATCH!>platformN<!><!>, platformN, platformN)
     J(platformJ, platformJ, platformJ)
 }

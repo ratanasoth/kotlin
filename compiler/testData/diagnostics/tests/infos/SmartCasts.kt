@@ -145,7 +145,7 @@ fun getStringLength(obj : Any) : Char? {
 fun toInt(i: Int?): Int = if (i != null) <!NI;DEBUG_INFO_SMARTCAST!><!DEBUG_INFO_SMARTCAST!>i<!><!> else 0
 fun illegalWhenBody(a: Any): Int = <!NI;NO_ELSE_IN_WHEN!><!NO_ELSE_IN_WHEN!>when<!><!>(a) {
     is Int -> <!NI;DEBUG_INFO_SMARTCAST!><!DEBUG_INFO_SMARTCAST!>a<!><!>
-    is String -> <!NI;TYPE_MISMATCH!><!NI;TYPE_MISMATCH!><!TYPE_MISMATCH!>a<!><!><!>
+    is String -> <!NI;TYPE_MISMATCH!><!TYPE_MISMATCH!>a<!><!>
 }
 fun illegalWhenBlock(a: Any): Int {
     when(a) {
@@ -184,7 +184,7 @@ fun returnFunctionLiteral(a: Any?): Function0<Int> {
 }
 
 fun returnFunctionLiteralExpressionBody(a: Any?): Function0<Int> =
-        if (a is Int) { -> <!NI;TYPE_MISMATCH!><!NI;TYPE_MISMATCH!><!DEBUG_INFO_SMARTCAST!>a<!><!><!> }
+        if (a is Int) { -> <!NI;TYPE_MISMATCH!><!DEBUG_INFO_SMARTCAST!>a<!><!> }
         else { -> 1 }
 
 

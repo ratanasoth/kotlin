@@ -15,8 +15,8 @@ fun foo() {
 
     val y: Int? = 0
     val z: Int? = 0
-    bar(<!NI;TYPE_MISMATCH!>if (y != null) y else <!NI;TYPE_MISMATCH!><!TYPE_MISMATCH!>z<!><!><!>, <!NI;TYPE_MISMATCH!><!NI;TYPE_MISMATCH!><!TYPE_MISMATCH!>y<!><!><!>)
+    bar(<!NI;TYPE_MISMATCH!>if (y != null) y else <!NI;TYPE_MISMATCH!><!TYPE_MISMATCH!>z<!><!><!>, <!NI;TYPE_MISMATCH!><!TYPE_MISMATCH!>y<!><!>)
     y <!NI;UNRESOLVED_REFERENCE_WRONG_RECEIVER!><!NI;DEBUG_INFO_UNRESOLVED_WITH_TARGET!><!UNSAFE_OPERATOR_CALL!>+<!><!><!> 2
-    baz(<!NI;TYPE_MISMATCH!><!NI;TYPE_MISMATCH!><!TYPE_MISMATCH!>y<!><!><!>, <!NI;TYPE_MISMATCH!><!NI;TYPE_MISMATCH!><!TYPE_MISMATCH!>y<!><!><!>, if (y == null) return else y, y)
+    baz(<!NI;TYPE_MISMATCH!><!TYPE_MISMATCH!>y<!><!>, <!NI;TYPE_MISMATCH!><!TYPE_MISMATCH!>y<!><!>, if (y == null) return else y, y)
     baz(y, z!!, z, y)
 }

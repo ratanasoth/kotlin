@@ -56,8 +56,8 @@ fun bar() {
         b checkType { _<String>() }
     }
 
-    foo <!NI;TYPE_MISMATCH!><!NI;TYPE_MISMATCH!>{ <!EXPECTED_PARAMETER_TYPE_MISMATCH!>(_, b): B<!> ->
+    foo <!NI;TYPE_MISMATCH!>{ <!EXPECTED_PARAMETER_TYPE_MISMATCH!>(_, b): B<!> ->
         <!NI;UNRESOLVED_REFERENCE!><!UNRESOLVED_REFERENCE!>_<!><!>.<!NI;DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!><!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>hashCode<!><!>()
         b checkType { _<Short>() }
-    }<!><!>
+    }<!>
 }

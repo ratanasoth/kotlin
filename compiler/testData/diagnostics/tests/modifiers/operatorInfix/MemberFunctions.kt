@@ -31,7 +31,7 @@ fun a() {
 
     with (Example()) {
         consumeInt(this + a)
-        consumeString(<!NI;TYPE_MISMATCH!><!NI;TYPE_MISMATCH!>this <!NI;OPERATOR_MODIFIER_REQUIRED!>-<!> b<!><!>)
+        consumeString(<!NI;TYPE_MISMATCH!>this <!NI;OPERATOR_MODIFIER_REQUIRED!>-<!> b<!>)
         consumeInt(this * a)
         consumeInt(this <!NI;OPERATOR_MODIFIER_REQUIRED!><!OPERATOR_MODIFIER_REQUIRED!>/<!><!> b)
 

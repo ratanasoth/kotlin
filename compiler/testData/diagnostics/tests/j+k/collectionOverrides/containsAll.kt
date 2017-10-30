@@ -38,20 +38,20 @@ fun foo(
         cs: Collection<String>, ca: Collection<Any?>
 ) {
     a.containsAll(cs)
-    a.containsAll(<!NI;TYPE_MISMATCH!><!NI;TYPE_MISMATCH!><!TYPE_MISMATCH!>ca<!><!><!>)
+    a.containsAll(<!NI;TYPE_MISMATCH!><!TYPE_MISMATCH!>ca<!><!>)
 
     b.containsAll(cs)
-    b.containsAll(<!NI;TYPE_MISMATCH!><!NI;TYPE_MISMATCH!><!TYPE_MISMATCH!>ca<!><!><!>)
+    b.containsAll(<!NI;TYPE_MISMATCH!><!TYPE_MISMATCH!>ca<!><!>)
 
     ic.containsAll(cs)
-    ic.containsAll(<!NI;TYPE_MISMATCH!><!NI;TYPE_MISMATCH!><!TYPE_MISMATCH!>ca<!><!><!>)
+    ic.containsAll(<!NI;TYPE_MISMATCH!><!TYPE_MISMATCH!>ca<!><!>)
 
     ka.containsAll(cs)
-    ka.containsAll(<!NI;TYPE_MISMATCH!><!NI;TYPE_MISMATCH!><!TYPE_MISMATCH!>ca<!><!><!>)
+    ka.containsAll(<!NI;TYPE_MISMATCH!><!TYPE_MISMATCH!>ca<!><!>)
 
     kb.containsAll(cs)
-    kb.containsAll(<!NI;TYPE_MISMATCH!><!NI;TYPE_MISMATCH!><!TYPE_MISMATCH!>ca<!><!><!>)
+    kb.containsAll(<!NI;TYPE_MISMATCH!><!TYPE_MISMATCH!>ca<!><!>)
 
     al.containsAll(cs)
-    al.containsAll(<!NI;TYPE_MISMATCH!><!NI;TYPE_MISMATCH!><!TYPE_MISMATCH!>ca<!><!><!>)
+    al.containsAll(<!NI;TYPE_MISMATCH!><!TYPE_MISMATCH!>ca<!><!>)
 }

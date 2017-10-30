@@ -15,7 +15,7 @@ public class J {
 
 fun test() {
     val n = J.staticN
-    foo(<!NI;TYPE_MISMATCH!><!NI;TYPE_MISMATCH!><!TYPE_MISMATCH!>n<!><!><!>)
+    foo(<!NI;TYPE_MISMATCH!><!TYPE_MISMATCH!>n<!><!>)
     J.staticNN = <!NI;TYPE_MISMATCH!><!TYPE_MISMATCH!>n<!><!>
     if (n != null) {
         foo(<!NI;DEBUG_INFO_SMARTCAST!><!DEBUG_INFO_SMARTCAST!>n<!><!>)

@@ -27,8 +27,8 @@ fun bar(aList: List<A>) {
         b checkType { _<String>() }
     }
 
-    aList.<!TYPE_INFERENCE_CONFLICTING_SUBSTITUTIONS!>foo<!> <!NI;TYPE_MISMATCH!><!NI;TYPE_MISMATCH!>{ (a, b): B ->
+    aList.<!TYPE_INFERENCE_CONFLICTING_SUBSTITUTIONS!>foo<!> <!NI;TYPE_MISMATCH!>{ (a, b): B ->
         b checkType { <!NI;UNRESOLVED_REFERENCE_WRONG_RECEIVER!><!NI;DEBUG_INFO_UNRESOLVED_WITH_TARGET!><!TYPE_MISMATCH!>_<!><!><!><Int>() }
         a checkType { <!NI;UNRESOLVED_REFERENCE_WRONG_RECEIVER!><!NI;DEBUG_INFO_UNRESOLVED_WITH_TARGET!><!TYPE_MISMATCH!>_<!><!><!><String>() }
-    }<!><!>
+    }<!>
 }

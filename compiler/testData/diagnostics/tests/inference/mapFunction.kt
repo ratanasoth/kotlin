@@ -20,8 +20,8 @@ fun foo() {
     checkSubtype<List<Int>>(b)
 
     //check for non-error types
-    checkSubtype<String>(<!NI;TYPE_MISMATCH!><!NI;TYPE_MISMATCH!><!TYPE_MISMATCH!>u<!><!><!>)
-    checkSubtype<String>(<!NI;TYPE_MISMATCH!><!NI;TYPE_MISMATCH!><!TYPE_MISMATCH!>b<!><!><!>)
+    checkSubtype<String>(<!NI;TYPE_MISMATCH!><!TYPE_MISMATCH!>u<!><!>)
+    checkSubtype<String>(<!NI;TYPE_MISMATCH!><!TYPE_MISMATCH!>b<!><!>)
 }
 
 

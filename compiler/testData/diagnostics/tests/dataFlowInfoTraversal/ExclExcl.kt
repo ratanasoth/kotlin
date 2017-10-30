@@ -3,7 +3,7 @@
 fun bar(x: Int) = x + 1
 
 fun f1(x: Int?) {
-    bar(<!NI;TYPE_MISMATCH!><!NI;TYPE_MISMATCH!><!TYPE_MISMATCH!>x<!><!><!>)
+    bar(<!NI;TYPE_MISMATCH!><!TYPE_MISMATCH!>x<!><!>)
     if (x != null) bar(x<!NI;UNNECESSARY_NOT_NULL_ASSERTION!><!UNNECESSARY_NOT_NULL_ASSERTION!>!!<!><!>)
     if (x == null) <!UNREACHABLE_CODE!>bar(<!><!NI;ALWAYS_NULL!><!ALWAYS_NULL!>x<!><!>!!<!UNREACHABLE_CODE!>)<!>
 }

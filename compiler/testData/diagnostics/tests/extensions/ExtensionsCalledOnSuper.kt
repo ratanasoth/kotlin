@@ -19,6 +19,6 @@ class C : T {
         <!NI;SUPER_CANT_BE_EXTENSION_RECEIVER!><!SUPER_CANT_BE_EXTENSION_RECEIVER!>super<!><!>.bar() // Error
         super.buzz() // OK, resolved to a member
         <!NI;SUPER_CANT_BE_EXTENSION_RECEIVER!><!SUPER_CANT_BE_EXTENSION_RECEIVER!>super<!><!>.buzz1() // Resolved to an extension
-        super.buzz1(<!NI;TYPE_MISMATCH!><!NI;TYPE_MISMATCH!><!TYPE_MISMATCH!>""<!><!><!>) // Resolved to a member
+        super.buzz1(<!NI;TYPE_MISMATCH!><!TYPE_MISMATCH!>""<!><!>) // Resolved to a member
     }
 }

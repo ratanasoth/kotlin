@@ -20,7 +20,7 @@ fun baz(s: String) {}
 
 fun f() {
     A().foo(1, <!SPREAD_OF_NULLABLE!>*<!>args)
-    bar(2, <!SPREAD_OF_NULLABLE!>*<!><!NI;TYPE_MISMATCH!><!NI;TYPE_MISMATCH!><!TYPE_MISMATCH!>args<!><!><!>)
+    bar(2, <!SPREAD_OF_NULLABLE!>*<!><!NI;TYPE_MISMATCH!><!TYPE_MISMATCH!>args<!><!>)
     baz(<!NI;NON_VARARG_SPREAD!><!NON_VARARG_SPREAD!><!SPREAD_OF_NULLABLE!>*<!><!><!><!NI;TYPE_MISMATCH!>args<!>)
 }
 

@@ -34,9 +34,9 @@ fun test1(outA: Out<A>, inB: In<B>) {
 fun <T> bar(o: Out<T>, i: In<T>): Two<T, T> = throw Exception("$o $i")
 
 fun test2(outA: Out<A>, inC: In<C>) {
-    <!TYPE_INFERENCE_CONFLICTING_SUBSTITUTIONS!>bar<!>(outA, <!NI;TYPE_MISMATCH!><!NI;TYPE_MISMATCH!>inC<!><!>)
+    <!TYPE_INFERENCE_CONFLICTING_SUBSTITUTIONS!>bar<!>(outA, <!NI;TYPE_MISMATCH!>inC<!>)
 
-    val b: Two<A, B> = <!NI;TYPE_MISMATCH!><!TYPE_INFERENCE_CONFLICTING_SUBSTITUTIONS!>bar<!>(<!NI;TYPE_MISMATCH!>outA<!>, <!NI;TYPE_MISMATCH!><!NI;TYPE_MISMATCH!>inC<!><!>)<!>
+    val b: Two<A, B> = <!NI;TYPE_MISMATCH!><!TYPE_INFERENCE_CONFLICTING_SUBSTITUTIONS!>bar<!>(outA, <!NI;TYPE_MISMATCH!>inC<!>)<!>
     use(b)
 }
 

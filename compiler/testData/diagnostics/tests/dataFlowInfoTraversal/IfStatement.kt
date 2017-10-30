@@ -26,7 +26,7 @@ fun ifThenElse(x: Int?) {
 
 fun ifIs(x: Int?, cond: Boolean) {
     if ((x is Int) == cond) {
-        checkSubtype<Int>(<!NI;TYPE_MISMATCH!><!NI;TYPE_MISMATCH!><!TYPE_MISMATCH!>x<!><!><!>)
+        checkSubtype<Int>(<!NI;TYPE_MISMATCH!><!TYPE_MISMATCH!>x<!><!>)
     }
-    checkSubtype<Int>(<!NI;TYPE_MISMATCH!><!NI;TYPE_MISMATCH!><!TYPE_MISMATCH!>x<!><!><!>)
+    checkSubtype<Int>(<!NI;TYPE_MISMATCH!><!TYPE_MISMATCH!>x<!><!>)
 }

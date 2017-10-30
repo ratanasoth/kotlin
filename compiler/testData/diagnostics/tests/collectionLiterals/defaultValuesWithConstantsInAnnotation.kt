@@ -20,7 +20,7 @@ annotation class Bar(
 )
 
 annotation class Baz(
-        val a: IntArray = [<!NI;NULL_FOR_NONNULL_TYPE!><!NI;NULL_FOR_NONNULL_TYPE!><!NULL_FOR_NONNULL_TYPE!>null<!><!><!>],
-        val b: IntArray = [1, <!NI;NULL_FOR_NONNULL_TYPE!><!NI;NULL_FOR_NONNULL_TYPE!><!NULL_FOR_NONNULL_TYPE!>null<!><!><!>, 2],
+        val a: IntArray = [<!NI;NULL_FOR_NONNULL_TYPE!><!NULL_FOR_NONNULL_TYPE!>null<!><!>],
+        val b: IntArray = [1, <!NI;NULL_FOR_NONNULL_TYPE!><!NULL_FOR_NONNULL_TYPE!>null<!><!>, 2],
         val c: IntArray = <!NI;ANNOTATION_PARAMETER_DEFAULT_VALUE_MUST_BE_CONSTANT!><!ANNOTATION_PARAMETER_DEFAULT_VALUE_MUST_BE_CONSTANT!>[<!NI;NO_THIS!><!NO_THIS!>this<!><!>]<!><!>
 )

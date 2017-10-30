@@ -37,7 +37,7 @@ fun test() {
 
     two()
     two(1)
-    two(<!NI;TYPE_MISMATCH!><!NI;TYPE_MISMATCH!><!TYPE_MISMATCH!>""<!><!><!>)
+    two(<!NI;TYPE_MISMATCH!><!TYPE_MISMATCH!>""<!><!>)
 
     all()
     all(1)

@@ -12,6 +12,6 @@ fun elvis(x: Number?): Int {
 
 fun elvisWithRHSTypeInfo(x: Number?): Any? {
     val result = x ?: x!!
-    checkSubtype<Int?>(<!NI;TYPE_MISMATCH!><!NI;TYPE_MISMATCH!><!TYPE_MISMATCH!>x<!><!><!>)
+    checkSubtype<Int?>(<!NI;TYPE_MISMATCH!><!TYPE_MISMATCH!>x<!><!>)
     return result
 }

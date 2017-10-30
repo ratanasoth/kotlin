@@ -6,7 +6,7 @@ fun <E : String?, T : ((CharSequence) -> Unit)?> foo(x: E, y: T) {
     }
 
     if (y != null) {
-        <!NI;UNSAFE_CALL!><!DEBUG_INFO_SMARTCAST!>y<!><!>(<!NI;TYPE_MISMATCH!><!NI;TYPE_MISMATCH!><!TYPE_MISMATCH!>x<!><!><!>)
+        <!NI;UNSAFE_CALL!><!DEBUG_INFO_SMARTCAST!>y<!><!>(<!NI;TYPE_MISMATCH!><!TYPE_MISMATCH!>x<!><!>)
     }
 
     if (x != null && y != null) {

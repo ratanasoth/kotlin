@@ -9,7 +9,7 @@ fun bar(<!NI;UNUSED_PARAMETER!><!UNUSED_PARAMETER!>x<!><!> : Int = 1, <!NI;UNUSE
 fun test() {
     foo()
     foo(2)
-    foo(<!NI;TYPE_MISMATCH!><!NI;TYPE_MISMATCH!><!TYPE_MISMATCH!>""<!><!><!>)
+    foo(<!NI;TYPE_MISMATCH!><!TYPE_MISMATCH!>""<!><!>)
     foo(b = "")
     foo(1, "")
     foo(a = 2)
@@ -17,7 +17,7 @@ fun test() {
 
     bar(z = "")
     bar(<!NI;NO_VALUE_FOR_PARAMETER!><!NO_VALUE_FOR_PARAMETER!>)<!><!>
-    bar(<!NI;TYPE_MISMATCH!><!NI;TYPE_MISMATCH!><!TYPE_MISMATCH!>""<!><!><!><!NI;NO_VALUE_FOR_PARAMETER!><!NO_VALUE_FOR_PARAMETER!>)<!><!>
+    bar(<!NI;TYPE_MISMATCH!><!TYPE_MISMATCH!>""<!><!><!NI;NO_VALUE_FOR_PARAMETER!><!NO_VALUE_FOR_PARAMETER!>)<!><!>
     bar(1, 1, "")
     bar(1, 1, "")
     bar(1, z = "")

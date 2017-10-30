@@ -14,5 +14,5 @@ fun <T : String?> foo(x: T) {
     bar2(x)
 
     <!TYPE_INFERENCE_UPPER_BOUND_VIOLATED!>bar3<!>(<!NI;TYPE_MISMATCH!>x<!>)
-    bar4(<!NI;TYPE_MISMATCH!><!NI;TYPE_MISMATCH!><!TYPE_MISMATCH!>x<!><!><!>)
+    bar4(<!NI;TYPE_MISMATCH!><!TYPE_MISMATCH!>x<!><!>)
 }

@@ -7,7 +7,7 @@ fun foo(x: Number, y: Int) {
         y -> {}
         else -> {}
     }
-    checkSubtype<Int>(<!NI;TYPE_MISMATCH!><!NI;TYPE_MISMATCH!><!TYPE_MISMATCH!>x<!><!><!>)
+    checkSubtype<Int>(<!NI;TYPE_MISMATCH!><!TYPE_MISMATCH!>x<!><!>)
 }
 
 fun bar(x: Number) {
@@ -15,7 +15,7 @@ fun bar(x: Number) {
         is Int -> checkSubtype<Int>(<!NI;DEBUG_INFO_SMARTCAST!><!DEBUG_INFO_SMARTCAST!>x<!><!>)
         else -> {}
     }
-    checkSubtype<Int>(<!NI;TYPE_MISMATCH!><!NI;TYPE_MISMATCH!><!TYPE_MISMATCH!>x<!><!><!>)
+    checkSubtype<Int>(<!NI;TYPE_MISMATCH!><!TYPE_MISMATCH!>x<!><!>)
 }
 
 fun whenWithoutSubject(x: Number) {
@@ -23,5 +23,5 @@ fun whenWithoutSubject(x: Number) {
         (x is Int) -> checkSubtype<Int>(<!NI;DEBUG_INFO_SMARTCAST!><!DEBUG_INFO_SMARTCAST!>x<!><!>)
         else -> {}
     }
-    checkSubtype<Int>(<!NI;TYPE_MISMATCH!><!NI;TYPE_MISMATCH!><!TYPE_MISMATCH!>x<!><!><!>)
+    checkSubtype<Int>(<!NI;TYPE_MISMATCH!><!TYPE_MISMATCH!>x<!><!>)
 }

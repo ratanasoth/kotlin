@@ -7,7 +7,7 @@ package d
 
 fun test(numbers: Iterable<Int>) {
     val s = numbers.map{it.toString()}.fold(""){it, it2 -> it + it2}
-    checkSubtype<Int>(<!NI;TYPE_MISMATCH!><!NI;TYPE_MISMATCH!><!TYPE_MISMATCH!>s<!><!><!>)
+    checkSubtype<Int>(<!NI;TYPE_MISMATCH!><!TYPE_MISMATCH!>s<!><!>)
 }
 
 //from library

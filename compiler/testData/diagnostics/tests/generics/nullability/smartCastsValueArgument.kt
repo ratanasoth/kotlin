@@ -17,7 +17,7 @@ fun <T : CharSequence?> foo(x: T) {
         <!TYPE_INFERENCE_UPPER_BOUND_VIOLATED!>bar1<!>(<!NI;TYPE_MISMATCH!>x<!>)
         bar1<CharSequence>(<!NI;TYPE_MISMATCH!><!NI;DEBUG_INFO_SMARTCAST!><!DEBUG_INFO_SMARTCAST!>x<!><!><!>)
         bar2(<!NI;TYPE_MISMATCH!><!NI;DEBUG_INFO_SMARTCAST!><!DEBUG_INFO_SMARTCAST!>x<!><!><!>)
-        bar3(<!NI;TYPE_MISMATCH!><!NI;TYPE_MISMATCH!><!TYPE_MISMATCH!>x<!><!><!>)
+        bar3(<!NI;TYPE_MISMATCH!><!TYPE_MISMATCH!>x<!><!>)
     }
 
     if (x is String) {
@@ -35,7 +35,7 @@ fun <T : CharSequence?> foo(x: T) {
 
         bar1(<!NI;DEBUG_INFO_SMARTCAST!><!DEBUG_INFO_SMARTCAST!>x<!><!>)
         bar2(<!NI;DEBUG_INFO_SMARTCAST!><!DEBUG_INFO_SMARTCAST!>x<!><!>)
-        bar3(<!NI;TYPE_MISMATCH!><!NI;TYPE_MISMATCH!><!TYPE_MISMATCH!>x<!><!><!>)
+        bar3(<!NI;TYPE_MISMATCH!><!TYPE_MISMATCH!>x<!><!>)
     }
 
     if (1 == 1) {
@@ -43,10 +43,10 @@ fun <T : CharSequence?> foo(x: T) {
         <!TYPE_INFERENCE_UPPER_BOUND_VIOLATED!>bar1<!>(<!NI;TYPE_MISMATCH!>x<!>)
         bar1<CharSequence>(<!NI;TYPE_MISMATCH!><!NI;DEBUG_INFO_SMARTCAST!><!DEBUG_INFO_SMARTCAST!>x<!><!><!>)
         bar2(<!NI;TYPE_MISMATCH!><!NI;DEBUG_INFO_SMARTCAST!><!DEBUG_INFO_SMARTCAST!>x<!><!><!>)
-        bar3(<!NI;TYPE_MISMATCH!><!NI;TYPE_MISMATCH!><!TYPE_MISMATCH!>x<!><!><!>)
+        bar3(<!NI;TYPE_MISMATCH!><!TYPE_MISMATCH!>x<!><!>)
 
         <!TYPE_INFERENCE_UPPER_BOUND_VIOLATED!>bar1<!>(y)
         bar2(<!DEBUG_INFO_SMARTCAST!>y<!>)
-        bar3(<!NI;TYPE_MISMATCH!><!NI;TYPE_MISMATCH!><!TYPE_MISMATCH!>y<!><!><!>)
+        bar3(<!NI;TYPE_MISMATCH!><!TYPE_MISMATCH!>y<!><!>)
     }
 }

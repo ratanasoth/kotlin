@@ -12,7 +12,7 @@ fun takeFirst(expr: StringBuilder): Char {
 
 fun evaluateArg(expr: CharSequence, numbers: ArrayList<Int>): Int {
   if (expr.length == 0) throw Exception("Syntax error: Character expected");
-  val c = takeFirst(<!NI;TYPE_MISMATCH!><!NI;TYPE_MISMATCH!><!TYPE_MISMATCH!>expr<!><!><!>)
+  val c = takeFirst(<!NI;TYPE_MISMATCH!><!TYPE_MISMATCH!>expr<!><!>)
   if (c >= '0' && c <= '9') {
     val n = c - '0'
     if (!numbers.contains(n)) throw Exception("You used incorrect number: " + n)

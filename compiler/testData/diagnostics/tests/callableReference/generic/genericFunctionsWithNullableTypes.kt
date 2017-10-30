@@ -23,8 +23,8 @@ fun <T> test(x: T) {
 
     baz<Int?, String?>(null, null, ::foo)
 
-    baz<Int, String?>(<!NI;NULL_FOR_NONNULL_TYPE!><!NI;NULL_FOR_NONNULL_TYPE!><!NULL_FOR_NONNULL_TYPE!>null<!><!><!>, null, ::foo)
-    baz<Int?, String>(null, <!NI;NULL_FOR_NONNULL_TYPE!><!NI;NULL_FOR_NONNULL_TYPE!><!NULL_FOR_NONNULL_TYPE!>null<!><!><!>, ::foo)
+    baz<Int, String?>(<!NI;NULL_FOR_NONNULL_TYPE!><!NULL_FOR_NONNULL_TYPE!>null<!><!>, null, ::foo)
+    baz<Int?, String>(null, <!NI;NULL_FOR_NONNULL_TYPE!><!NULL_FOR_NONNULL_TYPE!>null<!><!>, ::foo)
     <!NI;REIFIED_TYPE_FORBIDDEN_SUBSTITUTION!><!REIFIED_TYPE_FORBIDDEN_SUBSTITUTION!>baz<!><!>(null, "", ::foo)
     <!NI;REIFIED_TYPE_FORBIDDEN_SUBSTITUTION!><!REIFIED_TYPE_FORBIDDEN_SUBSTITUTION!>baz<!><!>(1, null, ::foo)
     <!NI;REIFIED_TYPE_FORBIDDEN_SUBSTITUTION!><!NI;REIFIED_TYPE_FORBIDDEN_SUBSTITUTION!><!REIFIED_TYPE_FORBIDDEN_SUBSTITUTION!><!REIFIED_TYPE_FORBIDDEN_SUBSTITUTION!>baz<!><!><!><!>(null, null, ::foo)

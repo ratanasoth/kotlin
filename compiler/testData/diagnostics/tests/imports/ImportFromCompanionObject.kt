@@ -134,7 +134,7 @@ fun testMembersFromSupertypes() {
     fromI()
 
     genericFromI(3)
-    genericFromI(<!NI;TYPE_MISMATCH!><!NI;TYPE_MISMATCH!><!TYPE_MISMATCH!>"a"<!><!><!>)
+    genericFromI(<!NI;TYPE_MISMATCH!><!TYPE_MISMATCH!>"a"<!><!>)
 
     own
 }

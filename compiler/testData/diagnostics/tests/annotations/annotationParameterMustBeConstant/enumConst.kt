@@ -11,5 +11,5 @@ enum class MyEnum {
     A
 }
 
-@AnnE(<!NI;TYPE_MISMATCH!><!NI;TYPE_MISMATCH!><!TYPE_MISMATCH!>Test()<!><!><!>)
+@AnnE(<!NI;TYPE_MISMATCH!><!TYPE_MISMATCH!>Test()<!><!>)
 class Test2

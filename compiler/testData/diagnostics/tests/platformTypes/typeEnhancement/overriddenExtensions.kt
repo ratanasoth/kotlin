@@ -12,7 +12,7 @@ class E : B1() {
 
         x<!NI;UNSAFE_CALL!><!UNSAFE_CALL!>.<!><!>foo(x)
         x<!NI;UNSAFE_CALL!><!UNSAFE_CALL!>.<!><!>foo("")
-        x.bar(<!NI;TYPE_MISMATCH!><!NI;TYPE_MISMATCH!><!TYPE_MISMATCH!>x<!><!><!>)
+        x.bar(<!NI;TYPE_MISMATCH!><!TYPE_MISMATCH!>x<!><!>)
         x.bar("")
     }
 

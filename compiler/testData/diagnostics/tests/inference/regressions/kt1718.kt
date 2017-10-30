@@ -10,7 +10,7 @@ fun test() {
     val list = arrayList("foo", "bar") + arrayList("cheese", "wine")
     checkSubtype<List<String>>(list)
     //check it's not an error type
-    checkSubtype<Int>(<!NI;TYPE_MISMATCH!><!NI;TYPE_MISMATCH!><!TYPE_MISMATCH!>list<!><!><!>)
+    checkSubtype<Int>(<!NI;TYPE_MISMATCH!><!TYPE_MISMATCH!>list<!><!>)
 }
 
 //from library

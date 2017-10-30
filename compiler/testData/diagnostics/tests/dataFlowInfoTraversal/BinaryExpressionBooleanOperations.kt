@@ -3,7 +3,7 @@
 
 fun foo1(x: Number, cond: Boolean): Boolean {
     val result = cond && ((x as Int) == 42)
-    checkSubtype<Int>(<!NI;TYPE_MISMATCH!><!NI;TYPE_MISMATCH!><!TYPE_MISMATCH!>x<!><!><!>)
+    checkSubtype<Int>(<!NI;TYPE_MISMATCH!><!TYPE_MISMATCH!>x<!><!>)
     return result
 }
 
@@ -15,7 +15,7 @@ fun foo2(x: Number, cond: Boolean): Boolean {
 
 fun foo3(x: Number, cond: Boolean): Boolean {
     val result = cond || ((x as Int) == 42)
-    checkSubtype<Int>(<!NI;TYPE_MISMATCH!><!NI;TYPE_MISMATCH!><!TYPE_MISMATCH!>x<!><!><!>)
+    checkSubtype<Int>(<!NI;TYPE_MISMATCH!><!TYPE_MISMATCH!>x<!><!>)
     return result
 }
 

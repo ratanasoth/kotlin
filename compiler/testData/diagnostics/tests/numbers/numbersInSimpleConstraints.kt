@@ -27,9 +27,9 @@ fun test() {
 
     val g: Byte = <!NI;TYPE_MISMATCH!><!TYPE_INFERENCE_EXPECTED_TYPE_MISMATCH!>either(1, 300)<!><!>
 
-    other(<!NI;CONSTANT_EXPECTED_TYPE_MISMATCH!><!NI;CONSTANT_EXPECTED_TYPE_MISMATCH!><!CONSTANT_EXPECTED_TYPE_MISMATCH!>11<!><!><!>)
+    other(<!NI;CONSTANT_EXPECTED_TYPE_MISMATCH!><!CONSTANT_EXPECTED_TYPE_MISMATCH!>11<!><!>)
 
-    <!TYPE_INFERENCE_PARAMETER_CONSTRAINT_ERROR!>otherGeneric<!>(<!NI;CONSTANT_EXPECTED_TYPE_MISMATCH!><!NI;CONSTANT_EXPECTED_TYPE_MISMATCH!><!CONSTANT_EXPECTED_TYPE_MISMATCH!>1<!><!><!>)
+    <!TYPE_INFERENCE_PARAMETER_CONSTRAINT_ERROR!>otherGeneric<!>(<!NI;CONSTANT_EXPECTED_TYPE_MISMATCH!><!CONSTANT_EXPECTED_TYPE_MISMATCH!>1<!><!>)
 
     val r = either(1, "")
     r checkType { <!NI;UNRESOLVED_REFERENCE_WRONG_RECEIVER!><!NI;DEBUG_INFO_UNRESOLVED_WITH_TARGET!>_<!><!><Any>() }
@@ -44,7 +44,7 @@ interface Inv<T>
 fun <T> exactBound(t: T, l: Inv<T>): T = throw Exception("$t $l")
 
 fun testExactBound(invS: Inv<String>, invI: Inv<Int>, invB: Inv<Byte>) {
-    <!TYPE_INFERENCE_CONFLICTING_SUBSTITUTIONS!>exactBound<!>(<!NI;CONSTANT_EXPECTED_TYPE_MISMATCH!>1<!>, <!NI;TYPE_MISMATCH!><!NI;TYPE_MISMATCH!>invS<!><!>)
+    <!TYPE_INFERENCE_CONFLICTING_SUBSTITUTIONS!>exactBound<!>(1, <!NI;TYPE_MISMATCH!><!NI;TYPE_MISMATCH!>invS<!><!>)
     exactBound(1, invI)
 
     val b = exactBound(1, invB)
@@ -68,7 +68,7 @@ interface Contr<in T>
 fun <T> upperBound(t: T, l: Contr<T>): T = throw Exception("$t $l")
 
 fun testUpperBound(contrS: Contr<String>, contrB: Contr<Byte>, contrN: Contr<Number>) {
-    <!TYPE_INFERENCE_CONFLICTING_SUBSTITUTIONS!>upperBound<!>(1, <!NI;TYPE_MISMATCH!><!NI;TYPE_MISMATCH!>contrS<!><!>)
+    <!TYPE_INFERENCE_CONFLICTING_SUBSTITUTIONS!>upperBound<!>(1, <!NI;TYPE_MISMATCH!>contrS<!>)
 
     val n = upperBound(1, contrN)
     n checkType { _<Int>() }

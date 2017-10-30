@@ -34,9 +34,9 @@ fun <T> copy3(<!NI;UNUSED_PARAMETER!><!UNUSED_PARAMETER!>from<!><!> : Array<out 
 fun copy4(<!NI;UNUSED_PARAMETER!><!UNUSED_PARAMETER!>from<!><!> : Array<out Number>, <!NI;UNUSED_PARAMETER!><!UNUSED_PARAMETER!>to<!><!> : Array<in Int>) {}
 
 fun f(ints: Array<Int>, any: Array<Any>, numbers: Array<Number>) {
-    copy1(<!NI;TYPE_MISMATCH!><!NI;TYPE_MISMATCH!><!TYPE_MISMATCH!>ints<!><!><!>, any)
+    copy1(<!NI;TYPE_MISMATCH!><!TYPE_MISMATCH!>ints<!><!>, any)
     copy2(ints, any) //ok
-    copy2(ints, <!NI;TYPE_MISMATCH!><!NI;TYPE_MISMATCH!><!TYPE_MISMATCH!>numbers<!><!><!>)
+    copy2(ints, <!NI;TYPE_MISMATCH!><!TYPE_MISMATCH!>numbers<!><!>)
     copy3<Int>(ints, numbers)
     copy4(ints, numbers) //ok
 }

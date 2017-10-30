@@ -8,6 +8,6 @@ fun foo(a: MutableMap<String, String>, x: String?) {
 }
 
 fun foo1(a: MutableMap<String, String>, x: String?) {
-    <!TYPE_INFERENCE_CONFLICTING_SUBSTITUTIONS!>a[<!NI;TYPE_MISMATCH!><!NI;TYPE_MISMATCH!>x<!><!>]<!> = x!!
+    <!TYPE_INFERENCE_CONFLICTING_SUBSTITUTIONS!>a[<!NI;TYPE_MISMATCH!>x<!>]<!> = x!!
     a[x<!NI;UNNECESSARY_NOT_NULL_ASSERTION!><!UNNECESSARY_NOT_NULL_ASSERTION!>!!<!><!>] = <!NI;DEBUG_INFO_SMARTCAST!><!DEBUG_INFO_SMARTCAST!>x<!><!>
 }

@@ -24,8 +24,8 @@ class A<F> {
         val x3 = foo2(y)
         x3.checkType { _<F?>() }
 
-        foo1<F>(<!NI;TYPE_MISMATCH!><!NI;TYPE_MISMATCH!><!TYPE_MISMATCH!>y<!><!><!>)
-        foo2<F>(<!NI;TYPE_MISMATCH!><!NI;TYPE_MISMATCH!><!TYPE_MISMATCH!>y<!><!><!>)
+        foo1<F>(<!NI;TYPE_MISMATCH!><!TYPE_MISMATCH!>y<!><!>)
+        foo2<F>(<!NI;TYPE_MISMATCH!><!TYPE_MISMATCH!>y<!><!>)
 
         foo1<Z>(z)
 

@@ -25,7 +25,7 @@ fun foo(k: KotlinClass) {
 
     k.setSomething4("")
     k.something4 += ""
-    k.setSomething4(<!NI;NULL_FOR_NONNULL_TYPE!><!NI;NULL_FOR_NONNULL_TYPE!><!NULL_FOR_NONNULL_TYPE!>null<!><!><!>)
+    k.setSomething4(<!NI;NULL_FOR_NONNULL_TYPE!><!NULL_FOR_NONNULL_TYPE!>null<!><!>)
     k.something4 = <!NI;NULL_FOR_NONNULL_TYPE!><!NULL_FOR_NONNULL_TYPE!>null<!><!>
 
     useString(k.getSomething5())

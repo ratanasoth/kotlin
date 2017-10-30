@@ -12,6 +12,6 @@ fun <T: Any> joinT(<!NI;UNUSED_PARAMETER!><!UNUSED_PARAMETER!>x<!><!>: Comparabl
 }
 
 fun test() {
-    val x2 = <!TYPE_INFERENCE_PARAMETER_CONSTRAINT_ERROR!>joinT<!>(<!NI;TYPE_MISMATCH!><!NI;TYPE_MISMATCH!><!TYPE_MISMATCH!>Unit<!><!><!>, "2")
+    val x2 = <!TYPE_INFERENCE_PARAMETER_CONSTRAINT_ERROR!>joinT<!>(<!NI;TYPE_MISMATCH!><!TYPE_MISMATCH!>Unit<!><!>, "2")
     checkSubtype<String?>(x2)
 }

@@ -46,7 +46,7 @@ fun testInOut() {
     (null <!NI;CAST_NEVER_SUCCEEDS!><!CAST_NEVER_SUCCEEDS!>as<!><!> Inv<*>).<!MEMBER_PROJECTED_OUT!>inf<!>(<!NI;CONSTANT_EXPECTED_TYPE_MISMATCH!>1<!>) // !!
 
     Inv<Int>().outf()
-    checkSubtype<Int>(<!NI;TYPE_MISMATCH!><!NI;TYPE_MISMATCH!><!TYPE_MISMATCH!>(null <!NI;CAST_NEVER_SUCCEEDS!><!CAST_NEVER_SUCCEEDS!>as<!><!> Inv<in Int>).outf()<!><!><!>) // Type mismatch
+    checkSubtype<Int>(<!NI;TYPE_MISMATCH!><!TYPE_MISMATCH!>(null <!NI;CAST_NEVER_SUCCEEDS!><!CAST_NEVER_SUCCEEDS!>as<!><!> Inv<in Int>).outf()<!><!>) // Type mismatch
     (null <!NI;CAST_NEVER_SUCCEEDS!><!CAST_NEVER_SUCCEEDS!>as<!><!> Inv<out Int>).outf()
     (null <!NI;CAST_NEVER_SUCCEEDS!><!CAST_NEVER_SUCCEEDS!>as<!><!> Inv<*>).outf()
 

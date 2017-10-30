@@ -7,5 +7,5 @@ class Pair<A>(<!NI;UNUSED_PARAMETER!><!UNUSED_PARAMETER!>a<!><!>: A)
 
 fun test() {
     val v = foo(Pair(1))
-    checkSubtype<Int>(<!NI;TYPE_MISMATCH!><!NI;TYPE_MISMATCH!><!TYPE_MISMATCH!>v<!><!><!>) // check that it is not error type
+    checkSubtype<Int>(<!NI;TYPE_MISMATCH!><!TYPE_MISMATCH!>v<!><!>) // check that it is not error type
 }

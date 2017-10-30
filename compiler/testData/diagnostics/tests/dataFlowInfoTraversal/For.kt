@@ -7,7 +7,7 @@ fun foo() {
     val a = Array<Int>(3, {0})
 
     for (p in a) {
-        bar(<!NI;TYPE_MISMATCH!><!NI;TYPE_MISMATCH!><!TYPE_MISMATCH!>x<!><!><!>)
+        bar(<!NI;TYPE_MISMATCH!><!TYPE_MISMATCH!>x<!><!>)
         if (x == null) continue
         bar(<!NI;DEBUG_INFO_SMARTCAST!><!DEBUG_INFO_SMARTCAST!>x<!><!>)
         for (q in a) {
@@ -17,7 +17,7 @@ fun foo() {
     }
 
     for (p in a) {
-        bar(<!NI;TYPE_MISMATCH!><!NI;TYPE_MISMATCH!><!TYPE_MISMATCH!>x<!><!><!>)
+        bar(<!NI;TYPE_MISMATCH!><!TYPE_MISMATCH!>x<!><!>)
         if (x == null) break
         bar(<!NI;DEBUG_INFO_SMARTCAST!><!DEBUG_INFO_SMARTCAST!>x<!><!>)
     }

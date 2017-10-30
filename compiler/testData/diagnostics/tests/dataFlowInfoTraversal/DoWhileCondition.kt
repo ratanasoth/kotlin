@@ -17,5 +17,5 @@ fun doWhileWithBreak(x: Int?, y0: Int) {
         y++
         if (y > 0) break
     } while (x!! == y)
-    checkSubtype<Int>(<!NI;TYPE_MISMATCH!><!NI;TYPE_MISMATCH!><!TYPE_MISMATCH!>x<!><!><!>)
+    checkSubtype<Int>(<!NI;TYPE_MISMATCH!><!TYPE_MISMATCH!>x<!><!>)
 }

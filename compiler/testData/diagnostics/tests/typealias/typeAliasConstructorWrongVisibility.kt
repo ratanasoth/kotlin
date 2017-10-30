@@ -9,11 +9,11 @@ open class MyClass private constructor(val x: Int) {
 
 typealias MyAlias = MyClass
 
-val test1 = <!INVISIBLE_MEMBER!>MyAlias<!>(<!NI;CONSTANT_EXPECTED_TYPE_MISMATCH!><!NI;CONSTANT_EXPECTED_TYPE_MISMATCH!>1<!><!>)
-val test1a = <!INVISIBLE_MEMBER!>MyClass<!>(<!NI;CONSTANT_EXPECTED_TYPE_MISMATCH!><!NI;CONSTANT_EXPECTED_TYPE_MISMATCH!>1<!><!>)
+val test1 = <!INVISIBLE_MEMBER!>MyAlias<!>(<!NI;CONSTANT_EXPECTED_TYPE_MISMATCH!>1<!>)
+val test1a = <!INVISIBLE_MEMBER!>MyClass<!>(<!NI;CONSTANT_EXPECTED_TYPE_MISMATCH!>1<!>)
 
-val test2 = <!INVISIBLE_MEMBER!>MyAlias<!>(<!NI;TYPE_MISMATCH!><!NI;TYPE_MISMATCH!>""<!><!>)
-val test2a = <!INVISIBLE_MEMBER!>MyClass<!>(<!NI;TYPE_MISMATCH!><!NI;TYPE_MISMATCH!>""<!><!>)
+val test2 = <!INVISIBLE_MEMBER!>MyAlias<!>(<!NI;TYPE_MISMATCH!>""<!>)
+val test2a = <!INVISIBLE_MEMBER!>MyClass<!>(<!NI;TYPE_MISMATCH!>""<!>)
 
 val test3 = MyAlias(1.0)
 val test3a = MyClass(1.0)

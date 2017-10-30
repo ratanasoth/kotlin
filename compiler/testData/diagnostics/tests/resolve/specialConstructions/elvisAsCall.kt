@@ -34,5 +34,5 @@ fun testDataFlowInfo2(a: Int?, b: Int?) {
 }
 
 fun testTypeMismatch(a: String?, b: Any) {
-    doInt(<!NI;TYPE_MISMATCH!><!NI;TYPE_MISMATCH!><!NI;TYPE_MISMATCH!><!TYPE_MISMATCH!>a<!> ?: <!TYPE_MISMATCH!>b<!><!><!><!>)
+    doInt(<!NI;TYPE_MISMATCH!><!NI;TYPE_MISMATCH!><!TYPE_MISMATCH!>a<!> ?: <!TYPE_MISMATCH!>b<!><!><!>)
 }

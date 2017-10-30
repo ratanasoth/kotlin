@@ -12,13 +12,13 @@
 
 annotation class Ann(vararg val s: String)
 
-@Ann(s = <!NI;TYPE_MISMATCH!><!NI;TYPE_MISMATCH!>arrayOf()<!><!>)
+@Ann(s = <!NI;TYPE_MISMATCH!>arrayOf()<!>)
 fun test1() {}
 
-@Ann(s = <!NI;TYPE_MISMATCH!><!NI;TYPE_MISMATCH!><!TYPE_MISMATCH!>intArrayOf()<!><!><!>)
+@Ann(s = <!NI;TYPE_MISMATCH!><!TYPE_MISMATCH!>intArrayOf()<!><!>)
 fun test2() {}
 
-@Ann(s = <!NI;TYPE_MISMATCH!><!NI;TYPE_MISMATCH!><!TYPE_INFERENCE_EXPECTED_TYPE_MISMATCH!>arrayOf(1)<!><!><!>)
+@Ann(s = <!NI;TYPE_MISMATCH!><!TYPE_INFERENCE_EXPECTED_TYPE_MISMATCH!>arrayOf(1)<!><!>)
 fun test3() {}
 
 @Ann("value1", "value2")

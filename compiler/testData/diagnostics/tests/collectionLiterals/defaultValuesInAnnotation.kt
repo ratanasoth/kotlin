@@ -21,6 +21,6 @@ annotation class Base(
 )
 
 annotation class Err(
-        val a: IntArray = [<!NI;CONSTANT_EXPECTED_TYPE_MISMATCH!><!NI;CONSTANT_EXPECTED_TYPE_MISMATCH!><!CONSTANT_EXPECTED_TYPE_MISMATCH!>1L<!><!><!>],
+        val a: IntArray = [<!NI;CONSTANT_EXPECTED_TYPE_MISMATCH!><!CONSTANT_EXPECTED_TYPE_MISMATCH!>1L<!><!>],
         val b: Array<String> = <!TYPE_INFERENCE_EXPECTED_TYPE_MISMATCH!>[<!NI;CONSTANT_EXPECTED_TYPE_MISMATCH!>1<!>]<!>
 )

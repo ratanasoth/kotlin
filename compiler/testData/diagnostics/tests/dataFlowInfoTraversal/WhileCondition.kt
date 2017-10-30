@@ -23,5 +23,5 @@ fun whileWithNoCondition(x: Int?) {
     while (<!NI;SYNTAX!><!><!SYNTAX!><!>) {
         x!!
     }
-    checkSubtype<Int>(<!NI;TYPE_MISMATCH!><!NI;TYPE_MISMATCH!><!TYPE_MISMATCH!>x<!><!><!>)
+    checkSubtype<Int>(<!NI;TYPE_MISMATCH!><!TYPE_MISMATCH!>x<!><!>)
 }

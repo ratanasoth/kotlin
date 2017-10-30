@@ -34,7 +34,7 @@ abstract class MyIt7 : Iterator<String> {
 
 
 fun foo(x: Iterator<String>, y: Iterator<String?>) {
-    x.forEachRemaining(<!NI;NULL_FOR_NONNULL_TYPE!><!NI;NULL_FOR_NONNULL_TYPE!><!NULL_FOR_NONNULL_TYPE!>null<!><!><!>)
+    x.forEachRemaining(<!NI;NULL_FOR_NONNULL_TYPE!><!NULL_FOR_NONNULL_TYPE!>null<!><!>)
 
     x.forEachRemaining { it -> it.length }
     x.forEachRemaining { it -> it<!NI;UNNECESSARY_SAFE_CALL!><!UNNECESSARY_SAFE_CALL!>?.<!><!>length }

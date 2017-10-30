@@ -9,7 +9,7 @@ annotation class Ann4(vararg val a: String = ["/"])
 annotation class Ann5(vararg val a: Ann4 = [])
 annotation class Ann6(vararg val a: Ann4 = [Ann4(*["a", "b"])])
 
-annotation class Ann7(vararg val a: Long = [1L, <!NI;NULL_FOR_NONNULL_TYPE!><!NI;NULL_FOR_NONNULL_TYPE!><!NULL_FOR_NONNULL_TYPE!>null<!><!><!>, <!NI;TYPE_MISMATCH!><!NI;TYPE_MISMATCH!><!TYPE_MISMATCH!>""<!><!><!>])
+annotation class Ann7(vararg val a: Long = [1L, <!NI;NULL_FOR_NONNULL_TYPE!><!NULL_FOR_NONNULL_TYPE!>null<!><!>, <!NI;TYPE_MISMATCH!><!TYPE_MISMATCH!>""<!><!>])
 
 @Ann1(*[])
 fun test1_0() {}

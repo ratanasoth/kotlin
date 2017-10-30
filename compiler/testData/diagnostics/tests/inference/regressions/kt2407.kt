@@ -8,7 +8,7 @@ import java.util.*
 fun test() {
     val foo = arrayList("").map { it -> it.length }.fold(0, { x, y -> Math.max(x, y) })
     checkSubtype<Int>(foo)
-    checkSubtype<String>(<!NI;TYPE_MISMATCH!><!NI;TYPE_MISMATCH!><!TYPE_MISMATCH!>foo<!><!><!>)
+    checkSubtype<String>(<!NI;TYPE_MISMATCH!><!TYPE_MISMATCH!>foo<!><!>)
 }
 
 //from library
