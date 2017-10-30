@@ -191,6 +191,15 @@ public enum PrimitiveBinaryOperationFIF implements FunctionIntrinsicFactory {
         // Temporary hack to get '%' for deprecated 'mod' operator
         Name descriptorName = descriptor.getName().equals(OperatorNameConventions.MOD) ? OperatorNameConventions.REM : descriptor.getName();
 
+        switch (descriptorName.asString()) {
+            case "or":
+                return JsBinaryOperator.BIT_OR;
+            case "and":
+                return JsBinaryOperator.BIT_AND;
+            default:
+                break;
+        }
+
         KtToken token = OperatorConventions.BINARY_OPERATION_NAMES.inverse().get(descriptorName);
         if (token == null) {
             token = OperatorConventions.BOOLEAN_OPERATIONS.inverse().get(descriptorName);
