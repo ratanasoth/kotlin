@@ -34,10 +34,6 @@ val COROUTINE_SUSPENDED_NAME = Name.identifier("COROUTINE_SUSPENDED")
 
 val COROUTINES_INTRINSICS_PACKAGE_FQ_NAME = DescriptorUtils.COROUTINES_PACKAGE_FQ_NAME.child(Name.identifier("intrinsics"))
 val COROUTINE_CONTEXT_FQ_NAME = COROUTINES_INTRINSICS_PACKAGE_FQ_NAME.child(Name.identifier("coroutineContext"))
-val COROUTINE_JVM_INTERNAL_PACKAGE_FQ_NAME = FqName("kotlin.coroutines.experimental.jvm.internal")
-val COROUTINE_IMPL_NAME = Name.identifier("CoroutineImpl")
-val COROUTINE_IMPL_FQ_NAME = COROUTINE_JVM_INTERNAL_PACKAGE_FQ_NAME.child(COROUTINE_IMPL_NAME)
-val DO_RESUME_NAME = Name.identifier("doResume")
 
 fun FunctionDescriptor.isBuiltInSuspendCoroutineOrReturn(): Boolean {
     if (name != SUSPEND_COROUTINE_OR_RETURN_NAME) return false
@@ -57,19 +53,3 @@ fun FunctionDescriptor.getBuiltInSuspendCoroutineOrReturn() =
 fun FunctionDescriptor.isBuiltInCoroutineContext() =
         (this as? PropertyGetterDescriptor)?.correspondingProperty?.fqNameSafe == COROUTINE_CONTEXT_FQ_NAME
 
-fun FunctionDescriptor.coroutineImplClassDescriptor() = module.getPackage(COROUTINE_JVM_INTERNAL_PACKAGE_FQ_NAME).memberScope
-        .getContributedDescriptors { it == COROUTINE_IMPL_NAME }.singleOrNull() as ClassDescriptor
-
-fun FunctionDescriptor.isCoroutineImplDoResume(): Boolean {
-    fun originalDescriptor() = coroutineImplClassDescriptor().unsubstitutedMemberScope
-            .getContributedFunctions(DO_RESUME_NAME, NoLookupLocation.FROM_BACKEND).singleOrNull() as FunctionDescriptor
-    if (this.name != DO_RESUME_NAME) return false
-    if (this.containingDeclaration !is ClassDescriptor) return false
-    val supertypes = (this.containingDeclaration as ClassDescriptor).defaultType.supertypes()
-    if (supertypes.none { it.constructor.declarationDescriptor?.fqNameSafe == COROUTINE_IMPL_FQ_NAME }) return false
-    return OverridingUtil.DEFAULT.isOverridableBy(
-            originalDescriptor(),
-            this,
-            coroutineImplClassDescriptor()
-    ).result == OverridingUtil.OverrideCompatibilityInfo.Result.OVERRIDABLE
-}

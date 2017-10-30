@@ -18,9 +18,7 @@ package org.jetbrains.kotlin.codegen.inline
 
 import com.intellij.psi.PsiElement
 import com.intellij.util.ArrayUtil
-import org.jetbrains.kotlin.backend.common.coroutineImplClassDescriptor
 import org.jetbrains.kotlin.backend.common.isBuiltInCoroutineContext
-import org.jetbrains.kotlin.backend.common.isCoroutineImplDoResume
 import org.jetbrains.kotlin.builtins.BuiltInsPackageFragment
 import org.jetbrains.kotlin.codegen.*
 import org.jetbrains.kotlin.codegen.AsmUtil.getMethodAsmFlags
@@ -231,12 +229,16 @@ abstract class InlineCodegen<out T: BaseExpressionCodegen>(
         codegen as ExpressionCodegen
 
         val functionDescriptor = codegen.context.functionDescriptor
-        return if (codegen.context.parentContext is ClosureContext && functionDescriptor.isCoroutineImplDoResume())
-            StackValue.thisOrOuter(codegen, functionDescriptor.coroutineImplClassDescriptor(), true, false)
-        else
+        val parentContext = codegen.context.parentContext
+        return if (parentContext is ClosureContext) {
+            val originalSuspendLambdaDescriptor = parentContext.originalSuspendLambdaDescriptor ?: error("No original lambda descriptor found")
+            codegen.genCoroutineInstanceForSuspendLambda(originalSuspendLambdaDescriptor!!) ?: error("No stack value for coroutine instance of lambda found")
+        }
+        else {
             codegen.findLocalOrCapturedValue(
                     functionDescriptor.valueParameters[functionDescriptor.valueParameters.size - 1]
             ) ?: error("Continuation shall be last parameter of suspend function")
+        }
     }
 
     protected fun inlineCall(nodeAndSmap: SMAPAndMethodNode, callDefault: Boolean): InlineResult {
