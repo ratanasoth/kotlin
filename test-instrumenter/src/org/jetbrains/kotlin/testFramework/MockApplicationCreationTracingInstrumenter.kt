@@ -51,7 +51,8 @@ class MockApplicationCreationTracingInstrumenter(private val debugInfo: Boolean)
             classBeingRedefined: Class<*>?,
             protectionDomain: ProtectionDomain,
             classfileBuffer: ByteArray
-    ): ByteArray {
+    ): ByteArray? {
+        if (loader::class.java.name == "org.jetbrains.kotlin.preloading.MemoryBasedClassLoader") return null
 
         if (className == "com/intellij/mock/MockComponentManager" && isMockComponentManagerCreationTracerCanBeLoaded(loader)) {
             return loadTransformAndSerialize(classfileBuffer, this::transformMockComponentManager)
@@ -60,7 +61,7 @@ class MockApplicationCreationTracingInstrumenter(private val debugInfo: Boolean)
             return loadTransformAndSerialize(classfileBuffer, this::transformMockComponentManagerPicoContainer)
         }
 
-        return classfileBuffer
+        return null
     }
 
 
