@@ -2175,6 +2175,11 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
 
         assert enclosingSuspendFunctionJvmView != null : "No JVM view function found for " + enclosingSuspendFunction;
 
+        return getContinuationParameterFromEnclosingSuspendFunctionDescriptor(enclosingSuspendFunctionJvmView);
+    }
+
+    @Nullable
+    public StackValue getContinuationParameterFromEnclosingSuspendFunctionDescriptor(@NotNull FunctionDescriptor enclosingSuspendFunctionJvmView) {
         ValueParameterDescriptor continuationParameter =
                 enclosingSuspendFunctionJvmView.getValueParameters()
                         .get(enclosingSuspendFunctionJvmView.getValueParameters().size() - 1);

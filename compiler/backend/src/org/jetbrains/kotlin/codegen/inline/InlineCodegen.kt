@@ -228,17 +228,13 @@ abstract class InlineCodegen<out T: BaseExpressionCodegen>(
         assert(codegen is ExpressionCodegen) { "Expected ExpressionCodegen in coroutineContext inlining" }
         codegen as ExpressionCodegen
 
-        val functionDescriptor = codegen.context.functionDescriptor
         val parentContext = codegen.context.parentContext
         return if (parentContext is ClosureContext) {
             val originalSuspendLambdaDescriptor = parentContext.originalSuspendLambdaDescriptor ?: error("No original lambda descriptor found")
-            codegen.genCoroutineInstanceForSuspendLambda(originalSuspendLambdaDescriptor!!) ?: error("No stack value for coroutine instance of lambda found")
+            codegen.genCoroutineInstanceForSuspendLambda(originalSuspendLambdaDescriptor) ?: error("No stack value for coroutine instance of lambda found")
         }
-        else {
-            codegen.findLocalOrCapturedValue(
-                    functionDescriptor.valueParameters[functionDescriptor.valueParameters.size - 1]
-            ) ?: error("Continuation shall be last parameter of suspend function")
-        }
+        else
+            codegen.getContinuationParameterFromEnclosingSuspendFunctionDescriptor(codegen.context.functionDescriptor) ?: error("No stack value for continuation parameter of suspend function")
     }
 
     protected fun inlineCall(nodeAndSmap: SMAPAndMethodNode, callDefault: Boolean): InlineResult {
