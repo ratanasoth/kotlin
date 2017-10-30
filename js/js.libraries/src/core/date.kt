@@ -22,105 +22,39 @@ public external class Date() {
 
     public fun getDate(): Int
 
-    public fun setDate(dayValue: Int): Unit
-
     public fun getDay(): Int
 
     public fun getFullYear(): Int
 
-    public fun setFullYear(yearValue: Int): Unit
-
-    public fun setFullYear(yearValue: Int, monthValue: Int): Unit
-
-    public fun setFullYear(yearValue: Int, monthValue: Int, dayValue: Int): Unit
-
     public fun getHours(): Int
-
-    public fun setHours(hoursValue: Int): Unit
-
-    public fun setHours(hoursValue: Int, minutesValue: Int): Unit
-
-    public fun setHours(hoursValue: Int, minutesValue: Int, secondsValue: Int): Unit
-
-    public fun setHours(hoursValue: Int, minutesValue: Int, secondsValue: Int, msValue: Int): Unit
 
     public fun getMilliseconds(): Int
 
-    public fun setMilliseconds(millisecondsValue: Int): Unit
-
     public fun getMinutes(): Int
-
-    public fun setMinutes(minutesValue: Int): Unit
-
-    public fun setMinutes(minutesValue: Int, secondsValue: Int): Unit
-
-    public fun setMinutes(minutesValue: Int, secondsValue: Int, msValue: Int): Unit
 
     public fun getMonth(): Int
 
-    public fun setMonth(monthValue: Int): Unit
-
-    public fun setMonth(monthValue: Int, dayValue: Int): Unit
-
     public fun getSeconds(): Int
 
-    public fun setSeconds(secondsValue: Int): Unit
-
-    public fun setSeconds(secondsValue: Int, msValue: Int): Unit
-
     public fun getTime(): Double
-
-    public fun setTime(timeValue: Number): Unit
 
     public fun getTimezoneOffset(): Int
 
     public fun getUTCDate(): Int
 
-    public fun setUTCDate(dayValue: Int): Unit
-
     public fun getUTCDay(): Int
 
     public fun getUTCFullYear(): Int
 
-    public fun setUTCFullYear(yearValue: Int): Unit
-
-    public fun setUTCFullYear(yearValue: Int, monthValue: Int): Unit
-
-    public fun setUTCFullYear(yearValue: Int, monthValue: Int, dayValue: Int): Unit
-
     public fun getUTCHours(): Int
-
-    public fun setUTCHours(hoursValue: Int): Unit
-
-    public fun setUTCHours(hoursValue: Int, minutesValue: Int): Unit
-
-    public fun setUTCHours(hoursValue: Int, minutesValue: Int, secondsValue: Int): Unit
-
-    public fun setUTCHours(hoursValue: Int, minutesValue: Int, secondsValue: Int, msValue: Int): Unit
 
     public fun getUTCMilliseconds(): Int
 
-    public fun setUTCMilliseconds(millisecondsValue: Int): Unit
-
     public fun getUTCMinutes(): Int
-
-    public fun setUTCMinutes(minutesValue: Int): Unit
-
-    public fun setUTCMinutes(minutesValue: Int, secondsValue: Int): Unit
-
-    public fun setUTCMinutes(minutesValue: Int, secondsValue: Int, msValue: Int): Unit
 
     public fun getUTCMonth(): Int
 
-    public fun setUTCMonth(monthValue: Int): Unit
-
-    public fun setUTCMonth(monthValue: Int, dayValue: Int): Unit
-
     public fun getUTCSeconds(): Int
-
-    public fun setUTCSeconds(secondsValue: Int): Unit
-
-    public fun setUTCSeconds(secondsValue: Int, msValue: Int): Unit
 
     public fun toDateString(): String
 
